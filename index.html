@@ -72,6 +72,28 @@
     margin:0;
   }
 
+  .wave{
+    display:flex;
+    gap:2px;
+    margin-top:28px;
+    height:14px;
+  }
+  .wave-seg{
+    flex:1;
+    background:var(--line);
+    border-radius:2px;
+    transition:background .4s ease;
+  }
+  .wave-seg.done{background:var(--accent);}
+  .wave-seg.next{background:var(--ember); animation:pulse 1.4s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.4;}}
+  .wave-caption{
+    margin:8px 0 0;
+    font-size:.75rem;
+    color:var(--text-dim);
+    font-family:'JetBrains Mono', monospace;
+  }
+
   /* Mode tabs */
   .tabs{
     display:flex;
@@ -121,8 +143,20 @@
     font-family:'Fraunces', serif;
     font-size:1.4rem;
     font-weight:600;
+    max-width:380px;
+    overflow:hidden;
+    white-space:nowrap;
+    position:relative;
   }
   .live .zone-name .flag{font-size:1.3rem; margin-right:6px;}
+  .live .zone-name .marquee-track{display:inline-block; padding-right:60px;}
+  .live .zone-name.scrolling .marquee-track{
+    animation:marquee 14s linear infinite;
+  }
+  @keyframes marquee{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-50%);}
+  }
   .countdown{
     display:flex;
     gap:14px;
@@ -217,15 +251,59 @@
     font-family:'JetBrains Mono', monospace;
     font-size:.8rem;
     color:var(--text-dim);
+    white-space:nowrap;
   }
+  .base-select, .base-select select{
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--text);
+    border-radius:10px;
+    font-family:'Inter', sans-serif;
+    font-size:.85rem;
+  }
+  .base-select{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:0 4px 0 14px;
+    color:var(--text-dim);
+    white-space:nowrap;
+  }
+  .base-select select{border:none; padding:10px 8px; cursor:pointer;}
+  .base-custom{
+    width:90px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    color:var(--text);
+    padding:10px 12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:.85rem;
+  }
+  .sort-btn{
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    padding:10px 14px;
+    border-radius:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:.82rem;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .sort-btn:hover{border-color:var(--accent); color:var(--accent);}
 
   main{padding-bottom:80px;}
 
   .zones-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(420px, 1fr));
-    gap:14px;
-    align-items:start;
+    columns:420px 2;
+    column-gap:14px;
+  }
+  .zones-grid .zone{
+    break-inside:avoid;
+    margin-bottom:14px;
+    display:inline-block;
+    width:100%;
   }
 
   .zone{
@@ -291,12 +369,20 @@
   }
   .tweet-card .tweet-foot{
     display:flex;
+    flex-wrap:wrap;
     justify-content:space-between;
     align-items:center;
+    gap:6px 14px;
     margin-top:10px;
     padding-top:10px;
     border-top:1px dashed var(--line);
   }
+  .zone-schedule{
+    margin:16px 0 0;
+    font-size:.88rem;
+    color:var(--text-dim);
+  }
+  .zone-schedule strong{color:var(--accent); font-weight:600;}
   .char-count{
     font-family:'JetBrains Mono', monospace;
     font-size:.75rem;
@@ -351,7 +437,8 @@
   @media (max-width:640px){
     .live{flex-direction:column; align-items:flex-start;}
     .countdown .num{font-size:1.5rem;}
-    .zones-grid{grid-template-columns:1fr;}
+    .zones-grid{columns:1;}
+    .toolbar{align-items:stretch;}
   }
 </style>
 </head>
@@ -368,7 +455,10 @@
       <div class="live" id="live-card">
         <div>
           <p class="label">PRÓXIMO EN CELEBRAR</p>
-          <p class="zone-name" id="live-zone-name">cargando…</p>
+          <p style="margin:0; display:flex; align-items:baseline; gap:8px;">
+            <span class="zone-name" id="live-zone-name">cargando…</span>
+            <span id="live-zone-utc" style="color:var(--text-dim); font-weight:400; font-size:1rem;"></span>
+          </p>
         </div>
         <div class="countdown" id="live-countdown">
           <div class="cell"><span class="num" id="cd-d">–</span><span class="unit">días</span></div>
@@ -378,6 +468,9 @@
         </div>
       </div>
     </div>
+
+    <div class="wave" id="wave-strip" title="Cada segmento es una zona horaria; se enciende cuando ya le llegó la medianoche."></div>
+    <p class="wave-caption">La medianoche recorriendo el mundo, zona por zona <span id="wave-count"></span></p>
 
     <div class="tabs">
       <button class="tab-btn" data-tab="newyear">🎆 Año Nuevo</button>
@@ -402,6 +495,15 @@
 
       <div class="toolbar">
         <input class="search" id="search" type="text" placeholder="Buscar país, ciudad o UTC (ej: Japón, UTC-3)…">
+        <label class="base-select">Estoy en:
+          <select id="base-select">
+            <option value="1">🇮🇹 Italia (UTC+1)</option>
+            <option value="-3">🇦🇷 Argentina (UTC-3)</option>
+            <option value="custom">Otro huso…</option>
+          </select>
+        </label>
+        <input class="base-custom" id="base-custom" type="number" step="0.25" placeholder="UTC±h" hidden>
+        <button class="sort-btn" id="sort-btn" title="Cambiar orden">↕ <span id="sort-label">+14 → -12</span></button>
         <span class="count-badge" id="count-badge"></span>
       </div>
 
@@ -458,16 +560,23 @@ function offsetToLocalMidnightUTC(offset, year, month, day){
   return Date.UTC(year, month, day, 0, 0, 0) - offset * 3600000;
 }
 
+function twLen(s){
+  // Twitter (and Python's len()) count Unicode code points, not UTF-16 code
+  // units — a plain `.length` overcounts every flag/emoji made of astral
+  // characters (surrogate pairs), which is nearly all of them here.
+  return [...s].length;
+}
+
 function buildTweets(utcLabel, cities, header){
   const prefix = `${header}\n\n${utcLabel}\n\n`;
   const single = prefix + cities.join('\n');
-  if (single.length <= 280) return [single];
+  if (twLen(single) <= 280) return [single];
   const parts = [];
   let current = [];
   for (const city of cities){
     const trial = current.concat([city]);
     const trialText = prefix + trial.join('\n');
-    if (trialText.length + 10 <= 280 || current.length === 0) current = trial;
+    if (twLen(trialText) + 10 <= 280 || current.length === 0) current = trial;
     else { parts.push(current); current = [city]; }
   }
   if (current.length) parts.push(current);
@@ -481,9 +590,12 @@ function escapeHtml(s){
 
 let ZONES = [];
 let currentMode = 'newyear';
+let sortDir = 'desc'; // '+14 -> -12' by default
+let baseOffset = 1;   // Italia
+let baseLabel = 'Italia';
 
 async function main(){
-  const res = await fetch('data.json');
+  const res = await fetch('data.json', { cache: 'no-store' });
   ZONES = await res.json();
   document.getElementById('zone-count-hint').textContent = ZONES.length;
 
@@ -493,6 +605,29 @@ async function main(){
   setTab('newyear');
 
   document.getElementById('search').addEventListener('input', applyFilter);
+  document.getElementById('sort-btn').addEventListener('click', () => {
+    sortDir = sortDir === 'desc' ? 'asc' : 'desc';
+    document.getElementById('sort-label').textContent = sortDir === 'desc' ? '+14 → -12' : '-12 → +14';
+    renderZones();
+  });
+  document.getElementById('base-select').addEventListener('change', (e) => {
+    const custom = document.getElementById('base-custom');
+    if (e.target.value === 'custom'){
+      custom.hidden = false;
+      custom.focus();
+      baseOffset = parseFloat(custom.value) || 0;
+      baseLabel = 'tu huso';
+    } else {
+      custom.hidden = true;
+      baseOffset = parseFloat(e.target.value);
+      baseLabel = e.target.value === '1' ? 'Italia' : 'Argentina';
+    }
+    renderZones();
+  });
+  document.getElementById('base-custom').addEventListener('input', (e) => {
+    baseOffset = parseFloat(e.target.value) || 0;
+    renderZones();
+  });
   document.getElementById('reset-greeting').addEventListener('click', () => {
     localStorage.removeItem('greeting_' + currentMode);
     loadGreeting();
@@ -534,7 +669,7 @@ function loadGreeting(){
 
 function updateGreetingCount(){
   const v = document.getElementById('greeting-input').value;
-  document.getElementById('greeting-count').textContent = `${v.length} caracteres de saludo`;
+  document.getElementById('greeting-count').textContent = `${twLen(v)} caracteres de saludo`;
 }
 
 function updateHero(){
@@ -557,6 +692,13 @@ function updateHero(){
     `Los ${ZONES.length} usos horarios del mundo, cuenta regresiva y tuits listos para programar el saludo de ${label} ${year} en cada país.`);
 }
 
+function wallClockInZone(instantMs, offsetHours){
+  const d = new Date(instantMs + offsetHours * 3600000);
+  return { h: d.getUTCHours(), m: d.getUTCMinutes(), day: d.getUTCDate(), month: d.getUTCMonth() };
+}
+function fmtHM(h, m){ return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`; }
+function fmtDM(day, month){ return `${String(day).padStart(2,'0')}/${String(month+1).padStart(2,'0')}`; }
+
 function currentZonesWithTweets(){
   const header = document.getElementById('greeting-input').value;
   return ZONES.map(z => {
@@ -568,10 +710,11 @@ function currentZonesWithTweets(){
 function renderZones(){
   const zonesEl = document.getElementById('zones');
   const countBadge = document.getElementById('count-badge');
-  const zones = currentZonesWithTweets();
+  let zones = currentZonesWithTweets();
   const [month, day] = MODE_DATE[currentMode];
   const year = nextOccurrence(new Date(), month, day).getFullYear();
   zones.forEach(z => { z._target = new Date(offsetToLocalMidnightUTC(z.offset, year, month, day)); });
+  zones.sort((a,b) => sortDir === 'desc' ? b.offset - a.offset : a.offset - b.offset);
   window._activeZones = zones;
 
   zonesEl.innerHTML = '';
@@ -583,6 +726,10 @@ function renderZones(){
     const flagChars = (z.cities.join(' ').match(/\p{Regional_Indicator}{2}|\u{1F3F4}[\u{E0000}-\u{E007F}]+/gu) || []);
     const uniqueFlags = [...new Set(flagChars)].slice(0,6).join(' ');
 
+    const baseWall = wallClockInZone(z._target.getTime(), baseOffset);
+    const baseTimeStr = fmtHM(baseWall.h, baseWall.m);
+    const baseDateStr = fmtDM(baseWall.day, baseWall.month);
+
     div.innerHTML = `
       <div class="zone-head" data-toggle>
         <div class="zone-head-left">
@@ -593,15 +740,22 @@ function renderZones(){
         <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="zone-body">
+        <p class="zone-schedule">🕛 Medianoche local = <strong>${baseTimeStr} del ${baseDateStr}</strong>, hora de ${baseLabel}</p>
         <ul class="city-list">${z.cities.map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>
         <p class="tweets-title">TUITS PARA PROGRAMAR (${z.tweets.length})</p>
-        ${z.tweets.map((t,i) => `
+        ${z.tweets.map((t,i) => {
+          const tweetMs = z._target.getTime() + baseOffset*3600000 + i*60000;
+          const w = wallClockInZone(tweetMs, 0);
+          const when = `${fmtHM(w.h, w.m)} · ${fmtDM(w.day, w.month)} (${baseLabel})`;
+          return `
           <div class="tweet-card">${escapeHtml(t)}
             <div class="tweet-foot">
-              <span class="char-count ${t.length>280?'warn':''}">${t.length}/280 caracteres</span>
+              <span class="char-count ${twLen(t)>280?'warn':''}">${twLen(t)}/280 caracteres</span>
+              <span class="char-count">📅 ${when}</span>
               <button class="copy-btn" data-text="${encodeURIComponent(t)}">Copiar tuit ${z.tweets.length>1 ? (i+1)+'/'+z.tweets.length : ''}</button>
             </div>
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>
     `;
     zonesEl.appendChild(div);
@@ -609,6 +763,34 @@ function renderZones(){
 
   countBadge.textContent = zones.length + ' zonas horarias';
   applyFilter();
+  renderWave();
+}
+
+function renderWave(){
+  const zones = window._activeZones || [];
+  const el = document.getElementById('wave-strip');
+  el.innerHTML = zones.map((z,i) => `<span class="wave-seg" data-idx="${i}" title="${z.utc}"></span>`).join('');
+  tickWave();
+}
+
+function tickWave(){
+  const zones = window._activeZones;
+  const segs = document.querySelectorAll('.wave-seg');
+  if(!zones || !segs.length) return;
+  const now = new Date();
+  let doneCount = 0;
+  let nextIdx = -1, nextDiff = Infinity;
+  zones.forEach((z, idx) => {
+    const raw = z._target - now;
+    if (raw <= 0) doneCount++;
+    else if (raw < nextDiff) { nextDiff = raw; nextIdx = idx; }
+  });
+  segs.forEach(seg => {
+    const idx = +seg.dataset.idx;
+    seg.classList.toggle('done', zones[idx]._target - now <= 0);
+    seg.classList.toggle('next', idx === nextIdx);
+  });
+  document.getElementById('wave-count').textContent = `— ${doneCount} de ${zones.length} ya llegaron a la medianoche`;
 }
 
 document.addEventListener('click', (e) => {
@@ -656,9 +838,7 @@ function tick(){
   });
   if(!next) return;
   const { z, diff } = next;
-  const flagChars = (z.cities[0].match(/\p{Regional_Indicator}{2}|\u{1F3F4}[\u{E0000}-\u{E007F}]+/gu) || []);
-  document.getElementById('live-zone-name').innerHTML =
-    `${flagChars[0]||''} ${firstCityLabel(z.cities[0])} <span style="color:var(--text-dim); font-weight:400; font-size:1rem;">(${z.utc})</span>`;
+  renderLiveZoneName(z);
 
   const d = Math.floor(diff / 86400000);
   const h = Math.floor((diff % 86400000) / 3600000);
@@ -668,11 +848,29 @@ function tick(){
   document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
   document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
   document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+  tickWave();
 }
 
-function firstCityLabel(entry){
-  const parts = entry.split(' - ');
-  return parts[0].replace(/^\p{Regional_Indicator}{2}\s*|^\u{1F3F4}[\u{E0000}-\u{E007F}]+\s*/u,'').trim();
+const FLAG_RE = /^(\p{Regional_Indicator}{2}|\u{1F3F4}[\u{E0000}-\u{E007F}]+)\s*/u;
+
+function cityShortLabel(entry){
+  const m = entry.match(FLAG_RE);
+  const flag = m ? m[1] : '';
+  const rest = m ? entry.slice(m[0].length) : entry;
+  return `${flag} ${rest.split(' - ')[0]}`.trim();
+}
+
+function renderLiveZoneName(z){
+  const nameEl = document.getElementById('live-zone-name');
+  document.getElementById('live-zone-utc').textContent = `(${z.utc})`;
+  const labels = z.cities.map(cityShortLabel).join('  ·  ');
+  nameEl.classList.remove('scrolling');
+  nameEl.innerHTML = `<span class="marquee-track">${escapeHtml(labels)}</span>`;
+  const track = nameEl.querySelector('.marquee-track');
+  if (track.scrollWidth > nameEl.clientWidth){
+    track.innerHTML = `${escapeHtml(labels)}&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;${escapeHtml(labels)}`;
+    nameEl.classList.add('scrolling');
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -735,7 +933,7 @@ function renderCalendars(){
         ${c.note ? `<p class="cal-note">${c.note}</p>` : ''}
         <div class="tweet-card">${escapeHtml(c.greeting)}
           <div class="tweet-foot">
-            <span class="char-count">${c.greeting.length}/280 caracteres</span>
+            <span class="char-count">${twLen(c.greeting)}/280 caracteres</span>
             <button class="copy-btn" data-text="${encodeURIComponent(c.greeting)}">Copiar saludo</button>
           </div>
         </div>

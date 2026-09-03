@@ -1,5 +1,6 @@
 TUITS DE AÑO NUEVO 2026→2027 — listos para programar
 Basado en horario de invierno de Italia (UTC+1). Ordenado de GMT+14 a GMT-12.
+Este es un saludo de ejemplo (Año Nuevo, por defecto); en la página podés editarlo y también generar el de Navidad.
 ======================================================================
 
 ### ZONA UTC+14  (2 ciudades / 1 tuit)
@@ -184,10 +185,10 @@ UTC+9
 🇮🇩 Jayapura - Indonesia (Indonesia)
 🇹🇱 Dili - Timor-Leste (Timor-Leste)
 🇷🇺 Якутск (Yakutsk) - Россия (Russia)
-🇰🇷 서울 (Seoul) - 대한민국 (South Korea)
+🇰🇷 서울 (Seoul) / 부산 (Busan) - 대한민국 (South Korea)
 
 (1/2)
-[235 caracteres]
+[248 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
@@ -195,10 +196,10 @@ UTC+9
 UTC+9
 
 🇰🇵 평양 (Pyongyang) - 조선민주주의인민공화국 (North Korea)
-🇯🇵 東京 (Tokyo) - 日本 (Japan)
+🇯🇵 東京 (Tokyo) / 大阪 (Osaka) - 日本 (Japan)
 
 (2/2)
-[126 caracteres]
+[139 caracteres]
 
 
 ### ZONA UTC+8  (12 ciudades / 3 tuits)
@@ -234,13 +235,13 @@ UTC+8
 UTC+8
 
 🇷🇺 Иркутск (Irkutsk) - Россия (Russia)
-🇨🇳 上海 (Shanghai) - 中国 (China)
+🇨🇳 北京 (Beijing) / 上海 (Shanghai) - 中国 (China)
 🇹🇼 台北 (Taipei) - 台灣 (Taiwan)
 🇲🇴 澳門 (Macau) - 澳門 (Macau)
 🇭🇰 香港 (Hong Kong) - 香港 (Hong Kong)
 
 (3/3)
-[213 caracteres]
+[228 caracteres]
 
 
 ### ZONA UTC+7  (9 ciudades / 3 tuits)
@@ -253,33 +254,33 @@ UTC+7
 🇦🇶 Davis Station - Antarctica / Australia (Antarctica / Australia)
 🇨🇽 Flying Fish Cove - Christmas Island (Christmas Island)
 🇮🇩 Jakarta - Indonesia (Indonesia)
-🇻🇳 Hà Nội (Hanoi) - Việt Nam (Vietnam)
 
 (1/3)
-[252 caracteres]
+[213 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
 
 UTC+7
 
+🇻🇳 Hà Nội (Hanoi) / Thành phố Hồ Chí Minh (Ho Chi Minh City) - Việt Nam (Vietnam)
 🇲🇳 Ховд (Hovd) - Монгол Улс (Mongolia)
 🇷🇺 Красноярск / Новосибирск (Krasnoyarsk / Novosibirsk) - Россия (Russia)
-🇹🇭 กรุงเทพมหานคร (Bangkok) - ประเทศไทย (Thailand)
-🇱🇦 ວຽງຈັນ (Vientiane) - ລາວ (Laos)
 
 (2/3)
-[251 caracteres]
+[248 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
 
 UTC+7
 
+🇹🇭 กรุงเทพมหานคร (Bangkok) - ประเทศไทย (Thailand)
+🇱🇦 ວຽງຈັນ (Vientiane) - ລາວ (Laos)
 🇰🇭 ភ្នំពេញ (Phnom Penh) - កម្ពុជា (Cambodia)
 
 (3/3)
-[98 caracteres]
+[183 caracteres]
 
 
 ### ZONA UTC+6:30  (2 ciudades / 1 tuit)
@@ -327,9 +328,9 @@ UTC+5:45
 
 UTC+5:30
 
-🇮🇳 नई दिल्ली (New Delhi) - भारत (India)
+🇮🇳 नई दिल्ली (New Delhi) / मुंबई (Mumbai) / बेंगलुरु (Bangalore) - भारत (India)
 🇱🇰 ශ්‍රီ ජයවර්ධනපුර කෝට්ටེ་ (Sri Jayawardenepura Kotte) - ශ්‍රီ ලංකා (Sri Lanka)
-[170 caracteres]
+[210 caracteres]
 
 
 ### ZONA UTC+5  (8 ciudades / 3 tuits)
@@ -354,20 +355,20 @@ UTC+5
 🇷🇺 Екатеринбург (Yekaterinburg) - Россия (Russia)
 🇹🇯 Душанбе (Dushanbe) - Тоҷикистон (Tajikistan)
 🇰🇿 Астана / Алматы (Astana / Almaty) - Қазақстан (Kazakhstan)
-🇵🇰 اسلام آباد (Islamabad) - پاکستان (Pakistan)
 
 (2/3)
-[260 caracteres]
+[213 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
 
 UTC+5
 
+🇵🇰 اسلام آباد (Islamabad) / کراچی (Karachi) - پاکستان (Pakistan)
 🇲🇻 မާލެ (Malé) - ދިވެހިރާއްޖެ (Maldives)
 
 (3/3)
-[94 caracteres]
+[159 caracteres]
 
 
 ### ZONA UTC+4:30  (1 ciudad / 1 tuit)
@@ -403,12 +404,12 @@ UTC+4
 UTC+4
 
 🇦🇲 Երևան (Yerevan) - Հայաստան (Armenia)
-🇦🇪 أبو ظبي (Abu Dhabi) - الإمارات العربية المتحدة (UAE)
+🇦🇪 أبو ظبي (Abu Dhabi) / دبي (Dubai) - الإمارات العربية المتحدة (UAE)
 🇴🇲 مَسْقَط (Muscat) - عُمان (Oman)
 🇬🇪 თბილისი (Tbilisi) - საქართველო (Georgia)
 
 (2/2)
-[228 caracteres]
+[242 caracteres]
 
 
 ### ZONA UTC+3:30  (1 ciudad / 1 tuit)
@@ -459,38 +460,38 @@ UTC+3
 
 🇺🇬 Kampala - Uganda (Uganda)
 🇧🇾 Мінск (Minsk) - Беларусь (Belarus)
-🇷🇺 Москва (Moscow) - Россия (Russia)
+🇷🇺 Москва (Moscow) / Санкт-Петербург (Saint Petersburg) - Россия (Russia)
 🇯🇴 عمان (Amman) - الأردن (Jordan)
 🇧🇭 المنامة (Manama) - البحرين (Bahrain)
-🇮🇶 بغداد (Baghdad) - العراق (Iraq)
 
 (3/5)
-[266 caracteres]
+[268 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
 
 UTC+3
 
-🇸🇦 الرياض (Riyadh) - العربية السعودية (Saudi Arabia)
+🇮🇶 بغداد (Baghdad) - العراق (Iraq)
+🇸🇦 الرياض (Riyadh) / جدة (Jeddah) - العربية السعودية (Saudi Arabia)
 🇰🇼 مدينة الكويت (Kuwait City) - الكويت (Kuwait)
 🇾🇪 صنعاء (Sana'a) - اليمن (Yemen)
 🇸🇾 دمشق (Damascus) - سوريا (Syria)
-🇶🇦 الدوحة (Doha) - قطر (Qatar)
 
 (4/5)
-[254 caracteres]
+[273 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
 
 UTC+3
 
+🇶🇦 الدوحة (Doha) - قطر (Qatar)
 🇱🇧 بيروت (Beirut) - لبنان (Lebanon)
 🇪🇹 အዲስ አበባ (Addis Ababa) - ኢትዮጵያ (Ethiopia)
 
 (5/5)
-[133 caracteres]
+[164 caracteres]
 
 
 ### ZONA UTC+2  (28 ciudades / 6 tuits)
@@ -578,7 +579,7 @@ UTC+2
 [112 caracteres]
 
 
-### ZONA UTC+1  (47 ciudades / 9 tuits)
+### ZONA UTC+1  (47 ciudades / 10 tuits)
 ----------------------------------------------------------------------
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
@@ -591,8 +592,8 @@ UTC+1
 🇧🇯 Porto-Novo - Bénin (Benin)
 🇧🇦 Sarajevo - Bosna i Hercegovina (Bosnia and Herzegovina)
 
-(1/9)
-[274 caracteres]
+(1/10)
+[275 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
@@ -605,8 +606,8 @@ UTC+1
 🇨🇬 Brazzaville - Congo (Congo)
 🇲🇪 Podgorica - Crna Gora (Montenegro)
 
-(2/9)
-[264 caracteres]
+(2/10)
+[265 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
@@ -614,99 +615,108 @@ UTC+1
 UTC+1
 
 🇩🇰 København (Copenhagen) - Danmark (Denmark)
-🇩🇪 Berlin - Deutschland (Germany)
+🇩🇪 Berlin / Hamburg / München (Munich) - Deutschland (Germany)
 🇪🇸 Ceuta - España (Spain)
-🇪🇸 Madrid - España (Spain)
+🇪🇸 Madrid / Barcelona - España (Spain)
 🇪🇸 Melilla - España (Spain)
-🇫🇷 Paris - France (France)
-🇬🇦 Libreville - Gabon (Gabon)
 
-(3/9)
-[271 caracteres]
+(3/10)
+[256 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
 
 UTC+1
 
+🇫🇷 Paris / Marseille / Lyon - France (France)
+🇬🇦 Libreville - Gabon (Gabon)
 🇬🇮 Gibraltar - Gibraltar (Gibraltar - UK)
 🇬🇶 Malabo - Guinea Ecuatorial (Equatorial Guinea)
 🇭🇷 Zagreb - Hrvatska (Croatia)
-🇮🇹 Roma (Rome) - Italia (Italy)
-🇽🇰 Prishtinë (Pristina) - Kosova (Kosovo)
 
-(4/9)
-[250 caracteres]
+(4/10)
+[253 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
 
 UTC+1
 
+🇮🇹 Roma (Rome) / Milano (Milan) - Italia (Italy)
+🇽🇰 Prishtinë (Pristina) - Kosova (Kosovo)
 🇱🇮 Vaduz - Liechtenstein (Liechtenstein)
 🇱🇺 Luxembourg - Luxembourg (Luxembourg)
 🇭🇺 Budapest - Magyarország (Hungary)
+
+(5/10)
+[263 caracteres]
+
+2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
+🎇🥂🌟🪅💫💙🎉✨🍾🎆
+
+UTC+1
+
 🇲🇹 Valletta - Malta (Malta)
 🇳🇱 Amsterdam - Nederland (Netherlands)
 🇳🇪 Niamey - Niger (Niger)
-
-(5/9)
-[264 caracteres]
-
-2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
-🎇🥂🌟🪅💫💙🎉✨🍾🎆
-
-UTC+1
-
 🇳🇬 Abuja / Lagos - Nigeria (Nigeria)
 🇳🇴 Oslo - Norge (Norway)
 🇦🇹 Wien (Vienna) - Österreich (Austria)
-🇵🇱 Warszawa (Warsaw) - Polska (Poland)
-🇲🇨 Monaco-Ville - Principauté de Monaco (Principality of Monaco)
 
-(6/9)
-[259 caracteres]
+(6/10)
+[249 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
 
 UTC+1
 
+🇵🇱 Warszawa (Warsaw) - Polska (Poland)
+🇲🇨 Monaco-Ville - Principauté de Monaco (Principality of Monaco)
 🇨🇫 Bangui - République centrafricaine (Central African Republic)
+
+(7/10)
+[223 caracteres]
+
+2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
+🎇🥂🌟🪅💫💙🎉✨🍾🎆
+
+UTC+1
+
 🇨🇩 Kinshasa - République Démocratique du Congo (DR Congo)
 🇸🇲 San Marino - San Marino (San Marino)
 🇨🇭 Bern - Schweiz / Suisse / Svizzera (Switzerland)
+🇦🇱 Tiranë (Tirana) - Shqipëria (Albania)
 
-(7/9)
-[268 caracteres]
+(8/10)
+[245 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
 
 UTC+1
 
-🇦🇱 Tiranë (Tirana) - Shqipëria (Albania)
 🇸🇮 Ljubljana - Slovenija (Slovenia)
 🇸🇰 Bratislava - Slovensko (Slovakia)
 🇸🇪 Stockholm - Sverige (Sweden)
 🇹🇩 N'Djaména - Tchad (Chad)
+🇲🇰 Скопје (Skopje) - Северна Македонија (North Macedonia)
 
-(8/9)
-[227 caracteres]
+(9/10)
+[245 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
 
 UTC+1
 
-🇲🇰 Скопје (Skopje) - Северна Македонија (North Macedonia)
 🇷🇸 Београд (Belgrade) - Србија (Serbia)
 🇩🇿 الجزائر (Algiers) - الجزائر (Algeria)
 🇲🇦 Rabat - المغرب (Morocco)
 🇹🇳 تونس (Tunis) - تونس (Tunisia)
 
-(9/9)
-[253 caracteres]
+(10/10)
+[197 caracteres]
 
 
 ### ZONA UTC+0  (31 ciudades / 8 tuits)
@@ -859,13 +869,13 @@ UTC-3
 
 UTC-3
 
-🇦🇷 Buenos Aires - Argentina (Argentina)
+🇦🇷 Buenos Aires / Córdoba / Rosario - Argentina (Argentina)
 🇦🇷 Islas Georgias del Sur - Argentina (South Georgia Islands)
 🇦🇷 Islas Sandwich del Sur - Argentina (South Sandwich Islands)
 🇦🇷 Puerto Argentino - Argentina
 
 (2/4)
-[250 caracteres]
+[270 caracteres]
 
 2️⃣0️⃣ #HappyNewYear 2️⃣7️⃣
 🎇🥂🌟🪅💫💙🎉✨🍾🎆
@@ -1066,12 +1076,12 @@ UTC-6
 UTC-6
 
 🇭🇳 Tegucigalpa - Honduras (Honduras)
-🇲🇽 Ciudad de México - México (Mexico)
+🇲🇽 Ciudad de México / Guadalajara / Monterrey - México (Mexico)
 🇳🇮 Managua - Nicaragua (Nicaragua)
-🇺🇸 Dallas - United States (USA)
+🇺🇸 Chicago / Dallas - United States (USA)
 
 (2/2)
-[195 caracteres]
+[231 caracteres]
 
 
 ### ZONA UTC-7  (3 ciudades / 1 tuit)
@@ -1097,8 +1107,8 @@ UTC-8
 🇨🇦 Vancouver / Dawson - Canada (Canada)
 🇫🇷 Île Clipperton - France (Clipperton Island - France)
 🇵🇳 Adamstown - Pitcairn Islands (Pitcairn Island)
-🇺🇸 Los Angeles / Seattle - United States (USA)
-[239 caracteres]
+🇺🇸 Los Angeles / San Francisco / Seattle - United States (USA)
+[255 caracteres]
 
 
 ### ZONA UTC-9  (2 ciudades / 1 tuit)

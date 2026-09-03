@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Feliz Año Nuevo 2027 — Cada zona horaria del mundo</title>
-<meta name="description" content="Los 37 usos horarios del mundo, cuenta regresiva y tuits listos para programar el saludo de Año Nuevo en cada país.">
+<title id="page-title">Feliz Año Nuevo — Cada zona horaria del mundo</title>
+<meta name="description" id="page-desc" content="Los usos horarios del mundo, cuenta regresiva y tuits listos para programar el saludo de Año Nuevo y Navidad en cada país.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -13,8 +13,8 @@
     --ink-2:#141b3d;
     --panel:#171f45;
     --line:rgba(255,255,255,.10);
-    --gold:#f2b705;
-    --gold-soft:#f2b70522;
+    --accent:#2dd4bf;
+    --accent-soft:#2dd4bf22;
     --ember:#ff6b57;
     --violet:#8b7ff2;
     --text:#f3f1e9;
@@ -38,43 +38,75 @@
     font-weight:600;
     letter-spacing:-0.01em;
   }
-  .wrap{max-width:920px;margin:0 auto;padding:0 20px;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
   header.hero{
-    padding:64px 0 40px;
+    padding:56px 0 36px;
     border-bottom:1px solid var(--line);
   }
+  .hero-grid{
+    display:flex;
+    gap:40px;
+    align-items:flex-end;
+    flex-wrap:wrap;
+  }
+  .hero-copy{flex:1 1 480px; min-width:280px;}
   .kicker{
-    color:var(--gold);
+    color:var(--accent);
     font-size:.85rem;
     font-family:'JetBrains Mono', monospace;
     margin:0 0 14px;
   }
   h1{
-    font-size:clamp(2.1rem, 5vw, 3.4rem);
+    font-size:clamp(2.1rem, 4.2vw, 3.6rem);
     line-height:1.05;
     margin:0 0 16px;
   }
   h1 em{
     font-style:italic;
-    color:var(--gold);
+    color:var(--accent);
   }
   .lede{
     color:var(--text-dim);
     font-size:1.05rem;
-    max-width:56ch;
-    margin:0 0 8px;
+    max-width:64ch;
+    margin:0;
+  }
+
+  /* Mode tabs */
+  .tabs{
+    display:flex;
+    gap:8px;
+    margin:32px 0 0;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    padding:10px 18px;
+    border-radius:999px;
+    font-family:'Inter', sans-serif;
+    font-size:.9rem;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .tab-btn.active{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+    color:var(--accent);
   }
 
   /* Live countdown card */
   .live{
-    margin-top:36px;
+    flex:1 1 320px;
+    min-width:280px;
     background:linear-gradient(160deg, var(--panel), #1c2555);
     border:1px solid var(--line);
     border-radius:var(--radius);
     padding:26px 28px;
     display:flex;
     flex-wrap:wrap;
-    gap:20px 40px;
+    gap:20px 32px;
     align-items:center;
     justify-content:space-between;
   }
@@ -99,7 +131,7 @@
     font-family:'JetBrains Mono', monospace;
     font-size:2rem;
     font-weight:500;
-    color:var(--gold);
+    color:var(--accent);
     line-height:1;
   }
   .countdown .unit{
@@ -111,12 +143,62 @@
   }
   .countdown .cell{text-align:center;}
 
+  /* Greeting editor */
+  .editor{
+    margin:28px 0 0;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 24px;
+  }
+  .editor-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+  }
+  .editor-head h3{margin:0; font-size:1.05rem;}
+  .editor textarea{
+    width:100%;
+    min-height:86px;
+    background:var(--ink-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    color:var(--text);
+    font-family:'JetBrains Mono', monospace;
+    font-size:.92rem;
+    padding:12px 14px;
+    resize:vertical;
+  }
+  .editor-foot{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:10px;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .reset-btn{
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    padding:8px 14px;
+    border-radius:8px;
+    font-family:'Inter', sans-serif;
+    font-size:.82rem;
+    cursor:pointer;
+  }
+  .reset-btn:hover{border-color:var(--accent); color:var(--accent);}
+  .editor-hint{color:var(--text-dim); font-size:.8rem;}
+
   /* Nav / filter */
   .toolbar{
     display:flex;
     gap:10px;
     align-items:center;
-    margin:36px 0 18px;
+    margin:30px 0 18px;
     flex-wrap:wrap;
   }
   .search{
@@ -139,10 +221,16 @@
 
   main{padding-bottom:80px;}
 
+  .zones-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(420px, 1fr));
+    gap:14px;
+    align-items:start;
+  }
+
   .zone{
     border:1px solid var(--line);
     border-radius:var(--radius);
-    margin-bottom:14px;
     overflow:hidden;
     background:var(--panel);
   }
@@ -160,7 +248,7 @@
   .utc-tag{
     font-family:'JetBrains Mono', monospace;
     font-size:.95rem;
-    color:var(--gold);
+    color:var(--accent);
     min-width:64px;
     display:inline-block;
   }
@@ -181,11 +269,10 @@
     margin:16px 0 22px;
     padding:0;
     list-style:none;
-    columns:1;
     font-size:.92rem;
     color:var(--text-dim);
   }
-  .city-list li{margin-bottom:5px; break-inside:avoid;}
+  .city-list li{margin-bottom:5px;}
   .tweets-title{
     font-family:'JetBrains Mono', monospace;
     font-size:.78rem;
@@ -217,9 +304,9 @@
   }
   .char-count.warn{color:var(--ember);}
   .copy-btn{
-    background:var(--gold-soft);
-    border:1px solid var(--gold);
-    color:var(--gold);
+    background:var(--accent-soft);
+    border:1px solid var(--accent);
+    color:var(--accent);
     padding:6px 12px;
     border-radius:8px;
     font-family:'Inter', sans-serif;
@@ -228,8 +315,28 @@
     cursor:pointer;
     transition:background .15s ease;
   }
-  .copy-btn:hover{background:#f2b70544;}
-  .copy-btn.copied{background:var(--gold); color:var(--ink);}
+  .copy-btn:hover{background:#2dd4bf33;}
+  .copy-btn.copied{background:var(--accent); color:var(--ink);}
+
+  /* Otros calendarios */
+  .cal-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));
+    gap:16px;
+    margin-top:24px;
+  }
+  .cal-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 22px;
+  }
+  .cal-card h3{margin:0 0 4px; font-size:1.15rem;}
+  .cal-card .cal-sub{color:var(--text-dim); font-size:.82rem; margin:0 0 14px;}
+  .cal-card dl{margin:0 0 14px; font-size:.9rem;}
+  .cal-card dt{color:var(--text-dim); font-family:'JetBrains Mono', monospace; font-size:.75rem; margin-top:8px;}
+  .cal-card dd{margin:2px 0 0; color:var(--text);}
+  .cal-note{font-size:.78rem; color:var(--text-dim); font-style:italic; margin:8px 0 14px;}
 
   footer{
     border-top:1px solid var(--line);
@@ -237,11 +344,14 @@
     color:var(--text-dim);
     font-size:.85rem;
   }
-  footer a{color:var(--gold);}
+  footer a{color:var(--accent);}
+
+  [hidden]{display:none!important;}
 
   @media (max-width:640px){
     .live{flex-direction:column; align-items:flex-start;}
     .countdown .num{font-size:1.5rem;}
+    .zones-grid{grid-template-columns:1fr;}
   }
 </style>
 </head>
@@ -249,61 +359,228 @@
 
 <div class="wrap">
   <header class="hero">
-    <p class="kicker">31·12·2026 → 01·01·2027</p>
-    <h1>El Año Nuevo <em>le da la vuelta al mundo</em><br>en 37 husos horarios</h1>
-    <p class="lede">Cuenta regresiva en vivo y los tuits ya armados —con banderas, ciudades y nombres en su idioma original— listos para copiar y programar zona por zona.</p>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker" id="kicker">cargando…</p>
+        <h1 id="hero-title">El <em>calendario del mundo</em><br>huso por huso</h1>
+        <p class="lede">Cuenta regresiva en vivo y los tuits ya armados —con banderas, ciudades y nombres en su idioma original— listos para copiar y programar zona por zona. Editá el saludo, elegí Año Nuevo o Navidad, y consultá las fechas exactas de otros calendarios.</p>
+      </div>
+      <div class="live" id="live-card">
+        <div>
+          <p class="label">PRÓXIMO EN CELEBRAR</p>
+          <p class="zone-name" id="live-zone-name">cargando…</p>
+        </div>
+        <div class="countdown" id="live-countdown">
+          <div class="cell"><span class="num" id="cd-d">–</span><span class="unit">días</span></div>
+          <div class="cell"><span class="num" id="cd-h">–</span><span class="unit">hs</span></div>
+          <div class="cell"><span class="num" id="cd-m">–</span><span class="unit">min</span></div>
+          <div class="cell"><span class="num" id="cd-s">–</span><span class="unit">seg</span></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="live" id="live-card">
-      <div>
-        <p class="label">PRÓXIMO EN CELEBRAR</p>
-        <p class="zone-name" id="live-zone-name">cargando…</p>
-      </div>
-      <div class="countdown" id="live-countdown">
-        <div class="cell"><span class="num" id="cd-d">–</span><span class="unit">días</span></div>
-        <div class="cell"><span class="num" id="cd-h">–</span><span class="unit">hs</span></div>
-        <div class="cell"><span class="num" id="cd-m">–</span><span class="unit">min</span></div>
-        <div class="cell"><span class="num" id="cd-s">–</span><span class="unit">seg</span></div>
-      </div>
+    <div class="tabs">
+      <button class="tab-btn" data-tab="newyear">🎆 Año Nuevo</button>
+      <button class="tab-btn" data-tab="christmas">🎄 Navidad</button>
+      <button class="tab-btn" data-tab="other">🌙 Otros calendarios</button>
     </div>
   </header>
 
-  <div class="toolbar">
-    <input class="search" id="search" type="text" placeholder="Buscar país, ciudad o UTC (ej: Japón, UTC-3)…">
-    <span class="count-badge" id="count-badge"></span>
-  </div>
+  <main>
+    <section id="panel-holiday">
+      <div class="editor">
+        <div class="editor-head">
+          <h3>Tu saludo</h3>
+          <span class="editor-hint">Se guarda en este navegador y se aplica a las <span id="zone-count-hint">37</span> zonas.</span>
+        </div>
+        <textarea id="greeting-input" spellcheck="false"></textarea>
+        <div class="editor-foot">
+          <span class="char-count" id="greeting-count"></span>
+          <button class="reset-btn" id="reset-greeting">Restaurar saludo por defecto</button>
+        </div>
+      </div>
 
-  <main id="zones"></main>
+      <div class="toolbar">
+        <input class="search" id="search" type="text" placeholder="Buscar país, ciudad o UTC (ej: Japón, UTC-3)…">
+        <span class="count-badge" id="count-badge"></span>
+      </div>
+
+      <div class="zones-grid" id="zones"></div>
+    </section>
+
+    <section id="panel-other" hidden>
+      <p class="lede" style="margin:28px 0 0;">Estas celebraciones no siguen el ciclo de husos horarios de medianoche a medianoche: son un momento puntual del calendario, así que acá tenés la fecha exacta convertida a hora de Italia y de Argentina, más un saludo listo para copiar.</p>
+      <div class="cal-grid" id="cal-grid"></div>
+    </section>
+  </main>
 
   <footer>
-    <p>Generado a partir de la planilla de husos horarios · horario de invierno en Italia (UTC+1) · Argentina fija en UTC−3.</p>
-    <p>Hecho para programar el hilo de saludos de Año Nuevo, tuit por tuit. 🎆</p>
+    <p>Ciudades y husos según el horario vigente el 31/12 y el 25/12 (con horario de verano/invierno ya aplicado en cada país) · Argentina fija en UTC−3.</p>
+    <p>Hecho para programar el hilo de saludos, tuit por tuit. 🎆</p>
   </footer>
 </div>
 
 <script>
+const HEADER_DEFAULTS = {
+  newyear: (year) => {
+    const y = String(year).padStart(4,'0');
+    return `${emojify(y.slice(0,2))} #HappyNewYear ${emojify(y.slice(2))}\n🎇🥂🌟🪅💫💙🎉✨🍾🎆`;
+  },
+  christmas: (year) => {
+    const y = String(year).padStart(4,'0');
+    return `${emojify(y.slice(0,2))} #FelizNavidad ${emojify(y.slice(2))}\n🎄🎅🦌❄️🎁⛄🕯️✨🌟`;
+  }
+};
+const MODE_DATE = { newyear: [0,1], christmas: [11,25] }; // [month(0-idx), day]
+const MODE_LABEL = { newyear: 'Año Nuevo', christmas: 'Navidad' };
+
+function emojify(numStr){
+  return [...numStr].map(ch => ch + '️⃣').join('');
+}
+
+function nextOccurrence(now, month, day){
+  const y = now.getFullYear();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let candidate = new Date(y, month, day);
+  if (candidate < startOfToday) candidate = new Date(y + 1, month, day);
+  return candidate;
+}
+
+function formatUtcLabel(offset){
+  const sign = offset >= 0 ? '+' : '-';
+  const a = Math.abs(offset);
+  const h = Math.trunc(a);
+  const m = Math.round((a - h) * 60);
+  return m === 0 ? `UTC${sign}${h}` : `UTC${sign}${h}:${String(m).padStart(2,'0')}`;
+}
+
+function offsetToLocalMidnightUTC(offset, year, month, day){
+  return Date.UTC(year, month, day, 0, 0, 0) - offset * 3600000;
+}
+
+function buildTweets(utcLabel, cities, header){
+  const prefix = `${header}\n\n${utcLabel}\n\n`;
+  const single = prefix + cities.join('\n');
+  if (single.length <= 280) return [single];
+  const parts = [];
+  let current = [];
+  for (const city of cities){
+    const trial = current.concat([city]);
+    const trialText = prefix + trial.join('\n');
+    if (trialText.length + 10 <= 280 || current.length === 0) current = trial;
+    else { parts.push(current); current = [city]; }
+  }
+  if (current.length) parts.push(current);
+  const n = parts.length;
+  return parts.map((g,i) => prefix + g.join('\n') + `\n\n(${i+1}/${n})`);
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+let ZONES = [];
+let currentMode = 'newyear';
+
 async function main(){
   const res = await fetch('data.json');
-  const zones = await res.json();
+  ZONES = await res.json();
+  document.getElementById('zone-count-hint').textContent = ZONES.length;
 
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => setTab(btn.dataset.tab));
+  });
+  setTab('newyear');
+
+  document.getElementById('search').addEventListener('input', applyFilter);
+  document.getElementById('reset-greeting').addEventListener('click', () => {
+    localStorage.removeItem('greeting_' + currentMode);
+    loadGreeting();
+    renderZones();
+  });
+  document.getElementById('greeting-input').addEventListener('input', (e) => {
+    localStorage.setItem('greeting_' + currentMode, e.target.value);
+    updateGreetingCount();
+    renderZones();
+  });
+
+  renderCalendars();
+  tick();
+  setInterval(tick, 1000);
+}
+
+function setTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.getElementById('panel-holiday').hidden = (tab === 'other');
+  document.getElementById('panel-other').hidden = (tab !== 'other');
+  if (tab === 'other') return;
+  currentMode = tab;
+  loadGreeting();
+  updateHero();
+  renderZones();
+}
+
+function defaultGreeting(){
+  const [month, day] = MODE_DATE[currentMode];
+  const year = nextOccurrence(new Date(), month, day).getFullYear();
+  return HEADER_DEFAULTS[currentMode](year);
+}
+
+function loadGreeting(){
+  const saved = localStorage.getItem('greeting_' + currentMode);
+  document.getElementById('greeting-input').value = saved !== null ? saved : defaultGreeting();
+  updateGreetingCount();
+}
+
+function updateGreetingCount(){
+  const v = document.getElementById('greeting-input').value;
+  document.getElementById('greeting-count').textContent = `${v.length} caracteres de saludo`;
+}
+
+function updateHero(){
+  const [month, day] = MODE_DATE[currentMode];
+  const target = nextOccurrence(new Date(), month, day);
+  const year = target.getFullYear();
+  const label = MODE_LABEL[currentMode];
+  const dd = String(day).padStart(2,'0');
+  const mm = String(month+1).padStart(2,'0');
+  const prevDay = new Date(target); prevDay.setDate(prevDay.getDate()-1);
+  const pdd = String(prevDay.getDate()).padStart(2,'0');
+  const pmm = String(prevDay.getMonth()+1).padStart(2,'0');
+  document.getElementById('kicker').textContent = `${pdd}·${pmm}·${prevDay.getFullYear()} → ${dd}·${mm}·${year}`;
+  document.getElementById('hero-title').innerHTML =
+    currentMode === 'newyear'
+      ? `El Año Nuevo <em>${year}</em> le da la vuelta al mundo<br>en ${ZONES.length} husos horarios`
+      : `La Navidad <em>${year}</em> recorre el mundo<br>en ${ZONES.length} husos horarios`;
+  document.getElementById('page-title').textContent = `Feliz ${label} ${year} — Cada zona horaria del mundo`;
+  document.getElementById('page-desc').setAttribute('content',
+    `Los ${ZONES.length} usos horarios del mundo, cuenta regresiva y tuits listos para programar el saludo de ${label} ${year} en cada país.`);
+}
+
+function currentZonesWithTweets(){
+  const header = document.getElementById('greeting-input').value;
+  return ZONES.map(z => {
+    const utc = formatUtcLabel(z.offset);
+    return { offset: z.offset, utc, cities: z.cities, tweets: buildTweets(utc, z.cities, header) };
+  });
+}
+
+function renderZones(){
   const zonesEl = document.getElementById('zones');
   const countBadge = document.getElementById('count-badge');
+  const zones = currentZonesWithTweets();
+  const [month, day] = MODE_DATE[currentMode];
+  const year = nextOccurrence(new Date(), month, day).getFullYear();
+  zones.forEach(z => { z._target = new Date(offsetToLocalMidnightUTC(z.offset, year, month, day)); });
+  window._activeZones = zones;
 
-  function offsetToDate(offset){
-    // target: 2027-01-01T00:00:00 local time at `offset` hours from UTC
-    const h = Math.trunc(offset);
-    const m = Math.round((offset - h) * 60);
-    const utcMs = Date.UTC(2027,0,1,0,0,0) - (h*3600000 + m*60000);
-    return new Date(utcMs);
-  }
-
-  // Build DOM for each zone
+  zonesEl.innerHTML = '';
   zones.forEach((z, idx) => {
-    z._target = offsetToDate(z.offset);
     const div = document.createElement('div');
     div.className = 'zone';
     div.dataset.idx = idx;
 
-    const flagChars = (z.cities.join(' ').match(/\p{Regional_Indicator}{2}|\uD83C\uDFF4[\uDB40\uDC00-\uDB40\uDC7F]+/gu) || []);
+    const flagChars = (z.cities.join(' ').match(/\p{Regional_Indicator}{2}|\u{1F3F4}[\u{E0000}-\u{E007F}]+/gu) || []);
     const uniqueFlags = [...new Set(flagChars)].slice(0,6).join(' ');
 
     div.innerHTML = `
@@ -331,83 +608,141 @@ async function main(){
   });
 
   countBadge.textContent = zones.length + ' zonas horarias';
-
-  function escapeHtml(s){
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  // toggle open/close
-  zonesEl.addEventListener('click', (e) => {
-    const head = e.target.closest('[data-toggle]');
-    if(head){
-      head.closest('.zone').classList.toggle('open');
-      return;
-    }
-    const btn = e.target.closest('.copy-btn');
-    if(btn){
-      const text = decodeURIComponent(btn.dataset.text);
-      navigator.clipboard.writeText(text).then(() => {
-        const original = btn.textContent;
-        btn.textContent = '¡Copiado!';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
-      });
-    }
-  });
-
-  // search filter
-  document.getElementById('search').addEventListener('input', (e) => {
-    const q = e.target.value.trim().toLowerCase();
-    let visible = 0;
-    document.querySelectorAll('.zone').forEach(div => {
-      const idx = +div.dataset.idx;
-      const z = zones[idx];
-      const haystack = (z.utc + ' ' + z.cities.join(' ')).toLowerCase();
-      const match = !q || haystack.includes(q);
-      div.style.display = match ? '' : 'none';
-      if(match) visible++;
-    });
-    countBadge.textContent = visible + ' de ' + zones.length + ' zonas horarias';
-  });
-
-  // live countdown to whichever zone celebrates next
-  function tick(){
-    const now = new Date();
-    let next = null;
-    zones.forEach(z => {
-      let diff = z._target - now;
-      if(diff < 0){
-        // already passed this year, roll to next occurrence a year later (approx, just for display continuity)
-        diff += 365*24*3600000;
-      }
-      if(next === null || diff < next.diff){
-        next = { z, diff };
-      }
-    });
-    if(!next) return;
-    const { z, diff } = next;
-    const flagChars = (z.cities[0].match(/\p{Regional_Indicator}{2}|\uD83C\uDFF4[\uDB40\uDC00-\uDB40\uDC7F]+/gu) || []);
-    document.getElementById('live-zone-name').innerHTML =
-      `${flagChars[0]||''} ${firstCityLabel(z.cities[0])} <span style="color:var(--text-dim); font-weight:400; font-size:1rem;">(${z.utc})</span>`;
-
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById('cd-d').textContent = d;
-    document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
-    document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
-    document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
-  }
-
-  function firstCityLabel(entry){
-    const parts = entry.split(' - ');
-    return parts[0].replace(/^\p{Regional_Indicator}{2}\s*|^\uD83C\uDFF4[\uDB40\uDC00-\uDB40\uDC7F]+\s*/u,'').trim();
-  }
-
-  tick();
-  setInterval(tick, 1000);
+  applyFilter();
 }
+
+document.addEventListener('click', (e) => {
+  const head = e.target.closest('[data-toggle]');
+  if(head){
+    head.closest('.zone').classList.toggle('open');
+    return;
+  }
+  const btn = e.target.closest('.copy-btn');
+  if(btn){
+    const text = decodeURIComponent(btn.dataset.text);
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.textContent;
+      btn.textContent = '¡Copiado!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+    });
+  }
+});
+
+function applyFilter(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const zones = window._activeZones || [];
+  let visible = 0;
+  document.querySelectorAll('#zones .zone').forEach(div => {
+    const idx = +div.dataset.idx;
+    const z = zones[idx];
+    const haystack = (z.utc + ' ' + z.cities.join(' ')).toLowerCase();
+    const match = !q || haystack.includes(q);
+    div.style.display = match ? '' : 'none';
+    if(match) visible++;
+  });
+  document.getElementById('count-badge').textContent = visible + ' de ' + zones.length + ' zonas horarias';
+}
+
+function tick(){
+  const zones = window._activeZones;
+  if(!zones || !zones.length) return;
+  const now = new Date();
+  let next = null;
+  zones.forEach(z => {
+    let diff = z._target - now;
+    if(diff < 0) diff += 365*24*3600000;
+    if(next === null || diff < next.diff) next = { z, diff };
+  });
+  if(!next) return;
+  const { z, diff } = next;
+  const flagChars = (z.cities[0].match(/\p{Regional_Indicator}{2}|\u{1F3F4}[\u{E0000}-\u{E007F}]+/gu) || []);
+  document.getElementById('live-zone-name').innerHTML =
+    `${flagChars[0]||''} ${firstCityLabel(z.cities[0])} <span style="color:var(--text-dim); font-weight:400; font-size:1rem;">(${z.utc})</span>`;
+
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-d').textContent = d;
+  document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+}
+
+function firstCityLabel(entry){
+  const parts = entry.split(' - ');
+  return parts[0].replace(/^\p{Regional_Indicator}{2}\s*|^\u{1F3F4}[\u{E0000}-\u{E007F}]+\s*/u,'').trim();
+}
+
+// ---------------------------------------------------------------------------
+// Otros calendarios: celebraciones puntuales (no recorren huso por huso)
+// ---------------------------------------------------------------------------
+const OTHER_CALENDARS = [
+  {
+    emoji: '🕎', name: 'Rosh Hashaná (Año Nuevo judío)', sub: 'Comienza al atardecer del día anterior · calendario hebreo',
+    utcDate: '2026-09-11T18:00:00+03:00', place: 'Jerusalén (UTC+3, horario de verano de Israel)',
+    year: '5787', greeting: '🕎 #ShanaTova 5787\n🍎🍯✡️🕍🌟',
+    note: null
+  },
+  {
+    emoji: '✝️', name: 'Año Nuevo etíope (Enkutatash)', sub: 'Calendario etíope (7-8 años detrás del gregoriano)',
+    utcDate: '2026-09-11T00:00:00+03:00', place: 'Adís Abeba (UTC+3)',
+    year: '2019 E.C.', greeting: '✝️ #Enkutatash 2019\n🌼☀️🇪🇹🎉',
+    note: null
+  },
+  {
+    emoji: '🏮', name: 'Año Nuevo Chino (Año de la Cabra de Fuego)', sub: 'Primer día del calendario lunisolar chino',
+    utcDate: '2027-02-06T00:00:00+08:00', place: 'Beijing (UTC+8)',
+    year: '2027 · 4725', greeting: '🏮 #ChineseNewYear 2027\n🧧🐐🎆🥟🐉',
+    note: null
+  },
+  {
+    emoji: '🌸', name: 'Nowruz (Año Nuevo persa)', sub: 'Equinoccio de marzo · calendario solar iraní',
+    utcDate: '2027-03-20T12:00:00+03:30', place: 'Teherán (UTC+3:30, hora aproximada del equinoccio)',
+    year: '1406', greeting: '🌸 #Nowruz 1406\n🔥🌱🥚🪴✨',
+    note: 'La hora exacta del equinoccio varía; puede caer el 20 o el 21 según el año.'
+  },
+  {
+    emoji: '💦', name: 'Songkran (Año Nuevo tailandés)', sub: 'Festival del agua · calendario solar tailandés',
+    utcDate: '2027-04-13T00:00:00+07:00', place: 'Bangkok (UTC+7)',
+    year: '2570 B.E.', greeting: '💦 #Songkran 2570\n🌊🙏🇹🇭🎊',
+    note: 'Se celebra oficialmente del 13 al 15 de abril.'
+  },
+  {
+    emoji: '🌙', name: 'Año Nuevo islámico (1 Muharram)', sub: 'Calendario lunar Hijri — depende del avistamiento de la luna',
+    utcDate: '2027-06-05T00:00:00+03:00', place: 'La Meca (UTC+3)',
+    year: '1449 AH', greeting: '🌙 #IslamicNewYear 1449\n🕌⭐️🤲',
+    note: 'Fecha aproximada: el calendario Hijri se confirma por avistamiento lunar y puede variar ±1 día.'
+  },
+];
+
+function renderCalendars(){
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = OTHER_CALENDARS.map(c => {
+    const d = new Date(c.utcDate);
+    const italy = new Intl.DateTimeFormat('es-AR', { dateStyle:'long', timeStyle:'short', timeZone:'Europe/Rome' }).format(d);
+    const arg = new Intl.DateTimeFormat('es-AR', { dateStyle:'long', timeStyle:'short', timeZone:'America/Argentina/Buenos_Aires' }).format(d);
+    return `
+      <div class="cal-card">
+        <h3>${c.emoji} ${c.name}</h3>
+        <p class="cal-sub">${c.sub} · año ${c.year}</p>
+        <dl>
+          <dt>EPICENTRO</dt><dd>${c.place}</dd>
+          <dt>HORA DE ITALIA</dt><dd>${italy}</dd>
+          <dt>HORA DE ARGENTINA</dt><dd>${arg}</dd>
+        </dl>
+        ${c.note ? `<p class="cal-note">${c.note}</p>` : ''}
+        <div class="tweet-card">${escapeHtml(c.greeting)}
+          <div class="tweet-foot">
+            <span class="char-count">${c.greeting.length}/280 caracteres</span>
+            <button class="copy-btn" data-text="${encodeURIComponent(c.greeting)}">Copiar saludo</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
 main();
 </script>
 </body>

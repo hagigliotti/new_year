@@ -147,11 +147,13 @@
     overflow:hidden;
     white-space:nowrap;
     position:relative;
+    mask-image:linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
+    -webkit-mask-image:linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
   }
   .live .zone-name .flag{font-size:1.3rem; margin-right:6px;}
-  .live .zone-name .marquee-track{display:inline-block; padding-right:60px;}
+  .live .zone-name .marquee-track{display:inline-block;}
   .live .zone-name.scrolling .marquee-track{
-    animation:marquee 14s linear infinite;
+    animation:marquee 16s linear infinite;
   }
   @keyframes marquee{
     0%{transform:translateX(0);}
@@ -868,22 +870,29 @@ function tick(){
 
 const FLAG_RE = /^(\p{Regional_Indicator}{2}|\u{1F3F4}[\u{E0000}-\u{E007F}]+)\s*/u;
 
-function cityShortLabel(entry){
+function countryShortLabel(entry){
   const m = entry.match(FLAG_RE);
   const flag = m ? m[1] : '';
   const rest = m ? entry.slice(m[0].length) : entry;
-  return `${flag} ${rest.split(' - ')[0]}`.trim();
+  const afterDash = rest.includes(' - ') ? rest.split(' - ').slice(1).join(' - ') : rest;
+  return `${flag} ${afterDash.split(' (')[0]}`.trim();
 }
 
 function renderLiveZoneName(z){
   const nameEl = document.getElementById('live-zone-name');
   document.getElementById('live-zone-utc').textContent = `(${z.utc})`;
-  const labels = z.cities.map(cityShortLabel).join('  ·  ');
+  const seen = new Set();
+  const countries = [];
+  z.cities.forEach(c => {
+    const lbl = countryShortLabel(c);
+    if (!seen.has(lbl)) { seen.add(lbl); countries.push(lbl); }
+  });
+  const labels = countries.join('  ·  ');
   nameEl.classList.remove('scrolling');
   nameEl.innerHTML = `<span class="marquee-track">${escapeHtml(labels)}</span>`;
   const track = nameEl.querySelector('.marquee-track');
   if (track.scrollWidth > nameEl.clientWidth){
-    track.innerHTML = `${escapeHtml(labels)}&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;${escapeHtml(labels)}`;
+    track.innerHTML = `${escapeHtml(labels)}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${escapeHtml(labels)}`;
     nameEl.classList.add('scrolling');
   }
 }

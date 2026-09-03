@@ -403,6 +403,20 @@
   }
   .copy-btn:hover{background:#2dd4bf33;}
   .copy-btn.copied{background:var(--accent); color:var(--ink);}
+  .close-zone-btn{
+    display:block;
+    width:100%;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    padding:10px;
+    border-radius:8px;
+    font-family:'Inter', sans-serif;
+    font-size:.82rem;
+    cursor:pointer;
+    margin-top:4px;
+  }
+  .close-zone-btn:hover{border-color:var(--accent); color:var(--accent);}
 
   /* Otros calendarios */
   .cal-grid{
@@ -756,6 +770,7 @@ function renderZones(){
             </div>
           </div>`;
         }).join('')}
+        <button class="close-zone-btn" data-toggle>▲ Cerrar zona</button>
       </div>
     `;
     zonesEl.appendChild(div);

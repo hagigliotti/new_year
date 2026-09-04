@@ -1571,8 +1571,10 @@ function resolveCalendarInstance(cal, now){
 function renderCalendars(){
   const grid = document.getElementById('cal-grid');
   const now = new Date();
-  grid.innerHTML = OTHER_CALENDARS.map(c => {
-    const inst = resolveCalendarInstance(c, now);
+  const ordered = OTHER_CALENDARS
+    .map(c => ({ cal: c, inst: resolveCalendarInstance(c, now) }))
+    .sort((a, b) => new Date(a.inst.utcDate) - new Date(b.inst.utcDate));
+  grid.innerHTML = ordered.map(({ cal: c, inst }) => {
     const d = new Date(inst.utcDate);
     const italy = new Intl.DateTimeFormat('es-AR', { dateStyle:'long', timeStyle:'short', timeZone:'Europe/Rome' }).format(d);
     const arg = new Intl.DateTimeFormat('es-AR', { dateStyle:'long', timeStyle:'short', timeZone:'America/Argentina/Buenos_Aires' }).format(d);

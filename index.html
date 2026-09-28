@@ -553,6 +553,7 @@
   .cal-card dl{margin:0 0 14px; font-size:.9rem;}
   .cal-card dt{color:var(--text-dim); font-family:'JetBrains Mono', monospace; font-size:.75rem; margin-top:8px;}
   .cal-card dd{margin:2px 0 0; color:var(--text);}
+  .cal-recent{font-size:.78rem; color:var(--accent); font-weight:600; margin:0 0 8px;}
   .cal-note{font-size:.78rem; color:var(--text-dim); font-style:italic; margin:8px 0 14px;}
 
   footer{
@@ -632,7 +633,7 @@
     </section>
 
     <section id="panel-other" hidden>
-      <p class="lede" style="margin:28px 0 0;">Estas celebraciones no siguen el ciclo de husos horarios de medianoche a medianoche: son un momento puntual del calendario, así que acá tenés la fecha exacta convertida a hora de Italia y de Argentina, más un saludo listo para copiar. Cuando la fecha ya pasó, se muestra automáticamente la próxima.</p>
+      <p class="lede" style="margin:28px 0 0;">Estas celebraciones no siguen el ciclo de husos horarios de medianoche a medianoche: son un momento puntual del calendario, así que acá tenés la fecha exacta convertida a hora de Italia y de Argentina, más un saludo listo para copiar. Las que se celebraron en los últimos 30 días aparecen primero, marcadas como recién celebradas; después se muestra automáticamente la próxima fecha.</p>
       <div class="cal-grid" id="cal-grid"></div>
     </section>
 
@@ -1318,6 +1319,17 @@ function whatsappUrl(text){
   return `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
 
+// Botones compactos para compartir, que van al lado de "📅 Agendar" en
+// Otros calendarios y Feriados cuando la tarjeta de tuit completa está
+// oculta (así siempre se puede tuitear, aunque los tuits estén desactivados).
+function shareButtons(text, copyLabel){
+  if (!text) return '';
+  return `
+          <a class="tweet-btn" href="${twitterIntentUrl(text)}" target="_blank" rel="noopener noreferrer">🐦 Tuitear</a>
+          <a class="tweet-btn" href="${whatsappUrl(text)}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
+          <button class="copy-btn" data-text="${encodeURIComponent(text)}">${copyLabel}</button>`;
+}
+
 function icsDateUTC(date){
   const p = n => String(n).padStart(2, '0');
   return `${date.getUTCFullYear()}${p(date.getUTCMonth()+1)}${p(date.getUTCDate())}T${p(date.getUTCHours())}${p(date.getUTCMinutes())}${p(date.getUTCSeconds())}Z`;
@@ -1518,8 +1530,8 @@ const OTHER_CALENDARS = [
       { utcDate: '2026-09-11T00:00:00+03:00', year: '2019 E.C.' },
       { utcDate: '2027-09-12T00:00:00+03:00', year: '2020 E.C.' },
     ],
-    greeting: (year) => `✝️ #Enkutatash ${year.split(' ')[0]}\n🌼☀️🇪🇹🎉`,
-    note: null
+    greeting: (year) => `✝️ #Enkutatash ${year.split(' ')[0]}\n🌼☀️🇪🇹🇪🇷🎉`,
+    note: 'También lo celebra Eritrea, y la Iglesia copta de Egipto festeja el mismo día su Año Nuevo (Nayrouz). Cae el 11 de septiembre, o el 12 en el año previo a un bisiesto gregoriano.'
   },
   {
     emoji: '🏮', name: 'Año Nuevo Chino (Año de la Cabra de Fuego)', sub: 'Primer día del calendario lunisolar chino',
@@ -1528,7 +1540,7 @@ const OTHER_CALENDARS = [
       { utcDate: '2027-02-06T00:00:00+08:00', year: '2027 · 4725' },
     ],
     greeting: (year) => `🏮 #ChineseNewYear ${year.split(' ')[0]}\n🧧🐐🎆🥟🐉`,
-    note: null
+    note: 'El mismo Año Nuevo lunar se celebra como Tết en Vietnam y Seollal en Corea (en general, el mismo día).'
   },
   {
     emoji: '🌸', name: 'Nowruz (Año Nuevo persa)', sub: 'Equinoccio de marzo · calendario solar iraní',
@@ -1545,7 +1557,23 @@ const OTHER_CALENDARS = [
     recurring: { month: 3, day: 13, offset: 7 }, // fecha gregoriana fija todos los años
     yearLabel: (gregorianYear) => `${gregorianYear + 543} B.E.`,
     greeting: (year) => `💦 #Songkran ${year}\n🌊🙏🇹🇭🎊`,
-    note: 'Se celebra oficialmente del 13 al 15 de abril.'
+    note: 'Se celebra oficialmente del 13 al 15 de abril. Laos (Pi Mai), Camboya (Choul Chnam Thmey), Myanmar (Thingyan) y Sri Lanka (Aluth Avurudu) festejan su Año Nuevo en esos mismos días.'
+  },
+  {
+    emoji: '🏔️', name: 'Navavarsha (Año Nuevo nepalí, Bikram Sambat)', sub: '1 de Baisakh · calendario oficial de Nepal (~57 años adelante del gregoriano)',
+    place: 'Katmandú (UTC+5:45)',
+    recurring: { month: 3, day: 14, offset: 5.75 },
+    yearLabel: (gregorianYear) => `${gregorianYear + 57} B.S.`,
+    greeting: (year) => `🏔️ #NepaliNewYear ${year}\n🇳🇵🌺🎉`,
+    note: 'Fecha aproximada: el 1 de Baisakh cae el 13 o el 14 de abril según el año.'
+  },
+  {
+    emoji: '☦️', name: 'Año Nuevo ortodoxo (calendario juliano)', sub: '"Año Nuevo viejo" · 13 días detrás del gregoriano',
+    place: 'Moscú / Belgrado (medianoche en UTC+3)',
+    recurring: { month: 0, day: 14, offset: 3 },
+    yearLabel: (gregorianYear) => `${gregorianYear}`,
+    greeting: (year) => `☦️ ¡Feliz Año Nuevo ortodoxo ${year}!\n🇷🇸🇷🇺🇲🇰🇲🇪🥂✨`,
+    note: 'Se festeja la noche del 13 al 14 de enero en Serbia, Rusia, Macedonia del Norte, Montenegro y otras comunidades que siguen el calendario juliano.'
   },
   {
     emoji: '🌙', name: 'Año Nuevo islámico (1 Muharram)', sub: 'Calendario lunar Hijri — depende del avistamiento de la luna',
@@ -1568,19 +1596,64 @@ function resolveCalendarInstance(cal, now){
   return { utcDate: utcDate.toISOString(), year: cal.yearLabel(target.getFullYear()) };
 }
 
+// Si la celebración ocurrió hace poco (dentro de RECENT_DAYS), la devuelve
+// para destacarla arriba como "recién celebrada" — así no desaparece de la
+// vista apenas pasa la fecha.
+const RECENT_DAYS = 30;
+function recentCalendarInstance(cal, now){
+  const minMs = now.getTime() - RECENT_DAYS * 86400000;
+  let past;
+  if (cal.instances){
+    past = cal.instances.filter(inst => new Date(inst.utcDate) < now).pop();
+  } else {
+    const { month, day, offset } = cal.recurring;
+    const y = now.getUTCFullYear();
+    const thisYear = offsetToLocalMidnightUTC(offset, y, month, day);
+    const py = thisYear < now.getTime() ? y : y - 1;
+    past = { utcDate: new Date(offsetToLocalMidnightUTC(offset, py, month, day)).toISOString(), year: cal.yearLabel(py) };
+  }
+  if (!past || new Date(past.utcDate).getTime() < minMs) return null;
+  return past;
+}
+
+// Fecha en el epicentro de la celebración (no en UTC ni en Italia, que
+// pueden caer el día anterior).
+function epicenterDate(cal, inst){
+  const offsetH = cal.recurring
+    ? cal.recurring.offset
+    : (() => { const m = inst.utcDate.match(/([+-])(\d\d):(\d\d)$/); return m ? (m[1] === '-' ? -1 : 1) * (+m[2] + m[3] / 60) : 0; })();
+  const local = new Date(new Date(inst.utcDate).getTime() + offsetH * 3600000);
+  return new Intl.DateTimeFormat('es-AR', { dateStyle:'long', timeZone:'UTC' }).format(local);
+}
+
 function renderCalendars(){
   const grid = document.getElementById('cal-grid');
   const now = new Date();
   const ordered = OTHER_CALENDARS
-    .map(c => ({ cal: c, inst: resolveCalendarInstance(c, now) }))
-    .sort((a, b) => new Date(a.inst.utcDate) - new Date(b.inst.utcDate));
-  grid.innerHTML = ordered.map(({ cal: c, inst }) => {
+    .map(c => ({ cal: c, inst: resolveCalendarInstance(c, now), recent: recentCalendarInstance(c, now) }))
+    .sort((a, b) => {
+      // Las recién celebradas van primero (la más reciente arriba)
+      if (a.recent && b.recent) return new Date(b.recent.utcDate) - new Date(a.recent.utcDate);
+      if (a.recent) return -1;
+      if (b.recent) return 1;
+      return new Date(a.inst.utcDate) - new Date(b.inst.utcDate);
+    });
+  grid.innerHTML = ordered.map(({ cal: c, inst: nextInst, recent }) => {
+    const inst = recent || nextInst;
     const d = new Date(inst.utcDate);
     const italy = new Intl.DateTimeFormat('es-AR', { dateStyle:'long', timeStyle:'short', timeZone:'Europe/Rome' }).format(d);
     const arg = new Intl.DateTimeFormat('es-AR', { dateStyle:'long', timeStyle:'short', timeZone:'America/Argentina/Buenos_Aires' }).format(d);
     const greeting = c.greeting(inst.year);
+    let recentLine = '';
+    if (recent){
+      const ago = Math.floor((now - d) / 86400000);
+      const nextD = new Date(nextInst.utcDate);
+      const nextTxt = nextD > now ? ` · próximo: ${epicenterDate(c, nextInst)} (año ${nextInst.year})` : '';
+      recentLine = `<p class="cal-recent">🎉 Recién celebrado — ${ago === 0 ? 'hoy' : ago === 1 ? 'ayer' : `hace ${ago} días`}${nextTxt}</p>`;
+    }
     return `
       <div class="cal-card">
+        ${recentLine}
         <h3>${c.emoji} ${c.name}</h3>
         <p class="cal-sub">${c.sub} · año ${inst.year}</p>
         <dl>
@@ -1600,6 +1673,7 @@ function renderCalendars(){
         </div>` : ''}
         <div class="tweet-foot" style="margin-top:12px; padding-top:0; border-top:none;">
           <button class="ics-btn" data-ics-title="${encodeURIComponent(c.name)}" data-ics-desc="${encodeURIComponent(c.sub + ' · ' + c.place)}" data-ics-start="${d.toISOString()}" data-ics-allday="0">📅 Agendar</button>
+          ${showTweets ? '' : shareButtons(greeting, 'Copiar saludo')}
         </div>
       </div>`;
   }).join('');
@@ -1643,19 +1717,18 @@ function shiftTrasladable(date){
   return date;
 }
 
-// Las conmemoraciones de duelo (Memoria, Malvinas) y las religiosas
-// solemnes (Viernes Santo) quedan sin "tweet": no corresponde armarles un
-// saludo festivo. Güemes/San Martín llevan un texto de homenaje, no de
-// "feliz día", porque conmemoran su muerte.
+// Las conmemoraciones de duelo (Memoria, Malvinas), las religiosas
+// solemnes (Viernes Santo) y Güemes/San Martín llevan un texto de homenaje,
+// no un "feliz día": no corresponde armarles un saludo festivo.
 function getArgHolidays(year){
   const easter = easterSunday(year);
   return [
     { emoji: '🎊', name: 'Año Nuevo', date: dUTC(year, 0, 1), tweet: '🎊 ¡Feliz Año Nuevo! 🇦🇷\n🥂✨🎉', note: 'Comienzo del año calendario gregoriano.' },
     { emoji: '🎭', name: 'Carnaval (lunes)', date: addDays(easter, -48), tweet: '🎭 ¡Feliz Carnaval! 🇦🇷\n🎉🥁🎊', note: 'Se celebra el lunes y el martes previos al Miércoles de Ceniza, con desfiles de murgas y comparsas en todo el país.' },
     { emoji: '🎭', name: 'Carnaval (martes)', date: addDays(easter, -47), tweet: '🎭 ¡Feliz Carnaval! 🇦🇷\n🎉🥁🎊', note: 'Último día de Carnaval antes de la Cuaresma cristiana.' },
-    { emoji: '🕊️', name: 'Día Nacional de la Memoria por la Verdad y la Justicia', date: dUTC(year, 2, 24), note: 'Recuerda a las víctimas del golpe de Estado de 1976 y del terrorismo de Estado ejercido durante la última dictadura militar (1976-1983).' },
-    { emoji: '✝️', name: 'Viernes Santo', date: addDays(easter, -2), note: 'Conmemora la crucifixión de Jesucristo, dentro de la Semana Santa cristiana.' },
-    { emoji: '🎖️', name: 'Día del Veterano y de los Caídos en la Guerra de Malvinas', date: dUTC(year, 3, 2), note: 'Homenajea a los caídos y veteranos de la Guerra de Malvinas de 1982, iniciada el 2 de abril de ese año.' },
+    { emoji: '🕊️', name: 'Día Nacional de la Memoria por la Verdad y la Justicia', date: dUTC(year, 2, 24), tweet: '🕊️ Día Nacional de la Memoria por la Verdad y la Justicia 🇦🇷\n#NuncaMás', note: 'Recuerda a las víctimas del golpe de Estado de 1976 y del terrorismo de Estado ejercido durante la última dictadura militar (1976-1983).' },
+    { emoji: '✝️', name: 'Viernes Santo', date: addDays(easter, -2), tweet: '✝️ Viernes Santo\n🙏🕊️', note: 'Conmemora la crucifixión de Jesucristo, dentro de la Semana Santa cristiana.' },
+    { emoji: '🎖️', name: 'Día del Veterano y de los Caídos en la Guerra de Malvinas', date: dUTC(year, 3, 2), tweet: '🎖️ Hoy honramos a los veteranos y caídos en la Guerra de Malvinas 🇦🇷\n#MalvinasArgentinas', note: 'Homenajea a los caídos y veteranos de la Guerra de Malvinas de 1982, iniciada el 2 de abril de ese año.' },
     { emoji: '⚒️', name: 'Día del Trabajador', date: dUTC(year, 4, 1), tweet: '⚒️ ¡Feliz Día del Trabajador! 🇦🇷\n✊🎉', note: 'Día Internacional de los Trabajadores, en homenaje a los Mártires de Chicago y la jornada laboral de 8 horas.' },
     { emoji: '🏛️', name: 'Día de la Revolución de Mayo', date: dUTC(year, 4, 25), tweet: '🏛️ ¡Feliz 25 de Mayo! 🇦🇷\n🎉🏛️', note: 'Recuerda la Revolución de Mayo de 1810, que dio origen al primer gobierno patrio en el Río de la Plata.' },
     { emoji: '🚩', name: 'Paso a la Inmortalidad del Gral. Güemes', date: shiftTrasladable(dUTC(year, 5, 17)), tweet: '🚩 Hoy conmemoramos el Paso a la Inmortalidad del Gral. Martín Miguel de Güemes 🇦🇷\n🎖️🙏', note: `Recuerda la muerte del Gral. Martín Miguel de Güemes en 1821, defensor del norte argentino durante la guerra de la independencia. ${ARG_TRASLADABLE_NOTE}` },
@@ -1774,7 +1847,7 @@ function renderHolidayGrid(gridId, getListFn){
             <button class="copy-btn" data-text="${encodeURIComponent(h.tweet)}">Copiar tuit</button>
           </div>
         </div>` : ''}
-        <div class="tweet-foot" style="margin-top:12px; padding-top:0; border-top:none;">${icsBtn}</div>
+        <div class="tweet-foot" style="margin-top:12px; padding-top:0; border-top:none;">${icsBtn}${showTweets ? '' : shareButtons(h.tweet, 'Copiar tuit')}</div>
       </div>`;
   }).join('');
 }

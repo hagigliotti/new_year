@@ -26,6 +26,14 @@ Sitio: `https://hagigliotti.github.io/new_year/`
 
 Podés editarlo a mano. El formato de cada ciudad es siempre: `<bandera> <ciudad en idioma local> (<ciudad en inglés>) - <país en idioma local> (<país en inglés>)` — si el país ya está en inglés, no se repite.
 
+## Hora actual y diferencia
+
+Cada zona (Navidad / Año Nuevo), cada tarjeta de Otros calendarios y cada feriado tiene, fuera del tuit, un bloque con: a qué hora de tu huso es la medianoche allá, la hora actual allá y en tu huso, la diferencia en horas y cuánto falta. Se actualiza solo cada segundo. Las tarjetas se abren y se cierran tocando la cabecera (o con **Abrir todas**).
+
+## Vista para la web (`?vitrina=1`)
+
+`https://hagigliotti.github.io/new_year/?vitrina=1` es la versión que se ve dentro del iPhone en `hagigliotti.github.io/website`: solo muestra **Navidad** (los primeros 5 husos, de UTC+14 en adelante) y **Feriados**.
+
 ## Otros calendarios
 
-La tercera pestaña (`OTHER_CALENDARS` en `index.html`) es una lista fija con las próximas fechas de Rosh Hashaná, Año Nuevo chino, Nowruz, Enkutatash (etíope), Songkran (tailandés), Año Nuevo nepalí, Año Nuevo ortodoxo (juliano) y el Año Nuevo islámico, cada una con su conversión a hora de Italia y Argentina. Como no son eventos que crucen las 37 zonas horarias (son un momento puntual en su propio calendario), no generan un tuit por zona sino uno solo por celebración. Las que se celebraron en los últimos 30 días aparecen primero como "recién celebradas". Hay que actualizar esas fechas a mano una vez que pasan (el Hijri islámico en particular se confirma por avistamiento lunar, así que su fecha es aproximada).
+La tercera pestaña (`OTHER_CALENDARS` en `index.html`) es una lista fija con las próximas fechas de Rosh Hashaná, Año Nuevo chino, Losar (tibetano), Nyepi (balinés), Nowruz, Ugadi / Gudi Padwa (hindú), Enkutatash (etíope), Songkran (tailandés), Año Nuevo nepalí, Matariki (maorí), Año Nuevo ortodoxo (juliano) y el Año Nuevo islámico, cada una con su conversión a hora de Italia y Argentina. Como no son eventos que crucen las 37 zonas horarias (son un momento puntual en su propio calendario), no generan un tuit por zona sino uno solo por celebración. Las que se celebraron en los últimos 30 días aparecen primero como "recién celebradas". Hay que actualizar esas fechas a mano una vez que pasan (el Hijri islámico en particular se confirma por avistamiento lunar, así que su fecha es aproximada).

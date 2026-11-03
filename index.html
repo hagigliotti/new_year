@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1026">
 <title id="page-title">Feliz Año Nuevo — Cada zona horaria del mundo</title>
 <meta name="description" id="page-desc" content="Los husos horarios del mundo, cuenta regresiva y tuits listos para programar el saludo de Año Nuevo y Navidad en cada país.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -564,13 +565,195 @@
   }
   footer a{color:var(--accent);}
 
+  /* Bloque de hora: medianoche, hora actual y diferencia (fuera del tuit) */
+  .time-box{
+    margin:16px 0 0;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--accent-soft);
+    display:grid;
+    gap:6px;
+    font-size:.86rem;
+    color:var(--text-dim);
+    line-height:1.45;
+  }
+  .time-row{display:flex; gap:8px; align-items:baseline;}
+  .time-row .ico{flex:0 0 1.3em; text-align:center;}
+  .time-row strong{color:var(--accent); font-weight:600;}
+  .time-row b{color:var(--text); font-weight:600;}
+  .time-row .diff{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:.78rem;
+    padding:1px 8px;
+    border-radius:999px;
+    border:1px solid var(--accent);
+    color:var(--accent);
+    white-space:nowrap;
+  }
+  .time-row .diff.behind{border-color:var(--ember); color:var(--ember);}
+
+  /* Tarjetas plegables (Otros calendarios y Feriados) */
+  .cal-grid{align-items:start;}
+  .cal-card{padding:0; overflow:hidden;}
+  .card-head{
+    all:unset;
+    box-sizing:border-box;
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:16px 20px;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .card-head:hover{background:#1b2450;}
+  :root[data-theme="light"] .card-head:hover, :root[data-theme="light"] .zone-head:hover{background:#0d948810;}
+  .card-head:focus-visible{outline:2px solid var(--accent); outline-offset:-2px;}
+  .card-emoji{font-size:1.6rem; line-height:1; flex:0 0 auto;}
+  .card-titles{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:2px;}
+  .card-title{font-family:'Fraunces', Georgia, serif; font-weight:600; font-size:1.08rem; line-height:1.25;}
+  .card-sub{color:var(--text-dim); font-size:.8rem; font-family:'JetBrains Mono', monospace;}
+  .card-sub .soon{color:var(--accent);}
+  .cal-card .chev{margin-left:auto;}
+  .cal-card.open .chev{transform:rotate(180deg);}
+  .card-body{display:none; padding:0 20px 20px; border-top:1px solid var(--line);}
+  .cal-card.open .card-body{display:block;}
+  .card-body .cal-sub{margin:14px 0 0;}
+  .card-body dl{margin:12px 0 0;}
+  .card-body .cal-note{margin:12px 0 0;}
+  .cal-card .cal-recent{margin:0; padding:10px 20px 0;}
+  .panel-tools{display:flex; justify-content:flex-end; margin:18px 0 -8px;}
+  .panel-tools .sort-btn{font-size:.78rem; padding:8px 12px;}
+
+  /* Tuits: vista previa centrada, tipo tarjeta de X */
+  .tweet-card{
+    white-space:normal;
+    padding:0;
+    overflow:hidden;
+    margin:14px 0 10px;
+  }
+  .tweet-top{
+    display:flex; align-items:center; gap:10px;
+    padding:12px 14px 0;
+    text-align:left;
+  }
+  .tweet-avatar{
+    width:34px; height:34px; border-radius:50%;
+    display:grid; place-items:center;
+    background:linear-gradient(135deg, var(--accent), var(--violet));
+    color:#0b1026; font-weight:700; font-size:.72rem; letter-spacing:.02em;
+    flex:0 0 auto;
+  }
+  .tweet-who{display:flex; flex-direction:column; line-height:1.2; min-width:0;}
+  .tweet-who b{font-size:.86rem; color:var(--text);}
+  .tweet-who span{font-size:.76rem; color:var(--text-dim);}
+  .tweet-part{
+    margin-left:auto;
+    font-family:'JetBrains Mono', monospace; font-size:.72rem;
+    color:var(--text-dim); border:1px solid var(--line); border-radius:999px; padding:2px 8px;
+  }
+  .tweet-text{
+    white-space:pre-wrap;
+    text-align:center;
+    padding:14px 18px 4px;
+    font-size:.95rem;
+    line-height:1.55;
+    color:var(--text);
+    overflow-wrap:anywhere;
+  }
+  .tweet-card .tweet-foot{
+    justify-content:center;
+    margin:10px 0 0;
+    padding:10px 14px 12px;
+    background:rgba(127,127,127,.05);
+  }
+  .tweet-meta{
+    width:100%;
+    display:flex; justify-content:center; flex-wrap:wrap; gap:4px 14px;
+  }
+  .card-actions{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+  .vitrina-note{
+    margin:18px 0 0;
+    font-size:.82rem;
+    color:var(--text-dim);
+  }
+  .vitrina-note a{color:var(--accent);}
+
   [hidden]{display:none!important;}
 
+  /* ---------- Teléfono (iPhone y similares) ---------- */
+  html{-webkit-text-size-adjust:100%; text-size-adjust:100%;}
+  button, a, .zone-head{-webkit-tap-highlight-color:transparent; touch-action:manipulation;}
+  @media (hover:none){
+    .zone-head:hover, .card-head:hover{background:transparent;}
+  }
+
   @media (max-width:640px){
-    .live{flex-direction:column; align-items:flex-start;}
-    .countdown .num{font-size:1.5rem;}
+    .wrap{
+      padding-left:max(16px, env(safe-area-inset-left));
+      padding-right:max(16px, env(safe-area-inset-right));
+    }
+    header.hero{padding:calc(20px + env(safe-area-inset-top)) 0 20px;}
+    .hero-grid{gap:18px;}
+    .hero-copy{flex-basis:auto; min-width:0;}
+    .kicker{font-size:.74rem; margin-bottom:10px;}
+    h1{font-size:1.85rem; margin-bottom:10px;}
+    .lede{font-size:.92rem;}
+    .hero .lede{display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
+
+    .live{
+      flex:1 1 auto;
+      min-width:0;
+      width:100%;
+      flex-direction:column;
+      align-items:stretch;
+      gap:16px;
+      padding:18px;
+    }
+    .live-info{flex:0 0 auto;}
+    .live-city{font-size:1.08rem;}
+    .countdown{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;}
+    .countdown .cell{background:rgba(127,127,127,.08); border-radius:10px; padding:10px 0 8px;}
+    .countdown .num{font-size:1.6rem;}
+
+    .wave{margin-top:18px; height:10px; gap:1px;}
+
+    /* Pestañas en una sola fila que se desliza con el dedo */
+    .tabs{
+      flex-wrap:nowrap;
+      overflow-x:auto;
+      margin:20px calc(-1 * max(16px, env(safe-area-inset-left))) 0;
+      padding:2px max(16px, env(safe-area-inset-left)) 6px;
+      scrollbar-width:none;
+      -webkit-overflow-scrolling:touch;
+      scroll-snap-type:x proximity;
+      position:sticky; top:0; z-index:40;
+      background:var(--ink);
+    }
+    .tabs::-webkit-scrollbar{display:none;}
+    .tab-btn{flex:0 0 auto; padding:9px 14px; font-size:.86rem; scroll-snap-align:start;}
+    .menu-wrap{position:static;}
+    .menu-panel{left:max(16px, env(safe-area-inset-left)); top:auto; margin-top:8px;}
+
+    .toolbar{align-items:stretch; margin:20px 0 14px;}
+    .search{flex:1 1 100%;}
+    .count-badge{font-size:.74rem;}
+    .base-select{flex:1 1 auto;}
+    .search, .settings-row select, .settings-row input[type="number"], .modal textarea, .base-select select{font-size:16px;} /* evita el zoom de iOS */
     .zones-grid{columns:1;}
-    .toolbar{align-items:stretch;}
+    .zone-head{padding:14px 16px;}
+    .zone-body{padding:0 16px 18px;}
+    .utc-tag{min-width:0;}
+    .cal-grid{grid-template-columns:1fr; gap:12px; margin-top:16px;}
+    .card-head{padding:14px 16px;}
+    .card-body{padding:0 16px 16px;}
+    .tweet-text{font-size:.9rem; padding:12px 12px 4px;}
+    .tweet-btn, .ics-btn, .copy-btn{padding:8px 12px;}
+    .modal-backdrop{align-items:flex-end; padding:0;}
+    .modal{max-width:none; border-radius:18px 18px 0 0; padding-bottom:calc(22px + env(safe-area-inset-bottom)); max-height:88vh;}
+    footer{padding-bottom:calc(40px + env(safe-area-inset-bottom));}
   }
 </style>
 </head>
@@ -582,7 +765,7 @@
       <div class="hero-copy">
         <p class="kicker"><span id="kicker">cargando…</span> <span id="kicker-time" style="opacity:.75"></span></p>
         <h1 id="hero-title">El <em>calendario del mundo</em><br>huso por huso</h1>
-        <p class="lede">Cuenta regresiva en vivo y los tuits ya armados —con banderas, ciudades y nombres en su idioma original— listos para copiar y programar zona por zona. Editá el saludo, elegí Año Nuevo o Navidad, y consultá las fechas exactas de otros calendarios.</p>
+        <p class="lede">Cuenta regresiva en vivo y los tuits ya armados —con banderas, ciudades y nombres en su idioma original— listos para copiar y programar zona por zona. Editá el saludo, elegí Año Nuevo o Navidad, y consultá otros calendarios y feriados, con la hora de cada lugar.</p>
       </div>
       <div class="live" id="live-card">
         <div class="live-info">
@@ -634,6 +817,7 @@
 
     <section id="panel-other" hidden>
       <p class="lede" style="margin:28px 0 0;">Estas celebraciones no siguen el ciclo de husos horarios de medianoche a medianoche: son un momento puntual del calendario, así que acá tenés la fecha exacta convertida a hora de Italia y de Argentina, más un saludo listo para copiar. Las que se celebraron en los últimos 30 días aparecen primero, marcadas como recién celebradas; después se muestra automáticamente la próxima fecha.</p>
+      <div class="panel-tools"><button class="sort-btn" data-expand="panel-other">▼ Abrir todas</button></div>
       <div class="cal-grid" id="cal-grid"></div>
     </section>
 
@@ -648,6 +832,7 @@
         <button class="sort-btn" id="holiday-export-all">📅 Exportar todo el año</button>
       </div>
       <p class="lede" id="holiday-lede" style="margin:14px 0 0;"></p>
+      <div class="panel-tools"><button class="sort-btn" data-expand="panel-holidays">▼ Abrir todas</button></div>
       <div class="cal-grid" id="cal-grid-holidays"></div>
       <h3 class="patriotic-title" id="patriotic-title" hidden>Fechas patrias (no son feriados)</h3>
       <p class="cal-note" id="patriotic-note" hidden>Se conmemoran en el calendario escolar y cultural argentino, pero no son día no laborable.</p>
@@ -733,15 +918,29 @@
 </div>
 
 <script>
+// Modo vitrina (?vitrina=1): la versión que se ve dentro del iPhone en
+// hagigliotti.github.io/website. Solo muestra Navidad (los primeros 5 husos)
+// y Feriados.
+const PARAMS = new URLSearchParams(location.search);
+const VITRINA = PARAMS.has('vitrina') || PARAMS.get('modo') === 'vitrina';
+const VITRINA_ZONES = 5;
+const TAB_KEY = VITRINA ? 'cfg_lastTab_vitrina' : 'cfg_lastTab';
+let TOTAL_ZONES = 37;
+
 const HEADER_DEFAULTS = {
   newyear: (year) => {
     const y = String(year).padStart(4,'0');
-    return `${emojify(y.slice(0,2))} #HappyNewYear ${emojify(y.slice(2))}\n🎇🥂🌟🪅💫💙🎉✨🍾🎆`;
+    return `🎆✨ ${emojify(y.slice(0,2))} #HappyNewYear ${emojify(y.slice(2))} ✨🎆\n🥂🍾🎇🌟🎉💫`;
   },
   christmas: (year) => {
     const y = String(year).padStart(4,'0');
-    return `${emojify(y.slice(0,2))} #FelizNavidad ${emojify(y.slice(2))}\n🎄🎅🦌❄️🎁⛄🕯️✨🌟`;
+    return `🎄✨ ${emojify(y.slice(0,2))} #FelizNavidad ${emojify(y.slice(2))} ✨🎄\n🎅🦌❄️🎁⛄🕯️🌟`;
   }
+};
+// Segunda línea del tuit de cada zona, debajo del saludo.
+const ZONE_TAGLINE = {
+  newyear: (utc, year) => `🕛 ${utc} · ¡Ya es ${year} en…`,
+  christmas: (utc) => `🕛 ${utc} · ¡Ya es Navidad en…`
 };
 const MODE_DATE = { newyear: [0,1], christmas: [11,25] }; // [month(0-idx), day]
 const MODE_LABEL = { newyear: 'Año Nuevo', christmas: 'Navidad' };
@@ -770,15 +969,29 @@ function offsetToLocalMidnightUTC(offset, year, month, day){
   return Date.UTC(year, month, day, 0, 0, 0) - offset * 3600000;
 }
 
+// Cuenta caracteres como X (Twitter): cada emoji —incluidas banderas y
+// 1️⃣— vale 2, igual que los caracteres chinos, japoneses, coreanos, etc.;
+// el alfabeto latino, griego, cirílico, hebreo, árabe y la puntuación común
+// valen 1. Así el tuit nunca queda cortado al publicarlo.
+const GRAPHEMES = (typeof Intl !== 'undefined' && Intl.Segmenter) ? new Intl.Segmenter('es', { granularity: 'grapheme' }) : null;
+const EMOJI_RE = /\p{Extended_Pictographic}|\p{Regional_Indicator}|⃣/u;
 function twLen(s){
-  // Twitter (and Python's len()) count Unicode code points, not UTF-16 code
-  // units — a plain `.length` overcounts every flag/emoji made of astral
-  // characters (surrogate pairs), which is nearly all of them here.
-  return [...s].length;
+  const segs = GRAPHEMES ? Array.from(GRAPHEMES.segment(s), x => x.segment) : [...s];
+  let n = 0;
+  for (const g of segs){
+    if (EMOJI_RE.test(g)){ n += 2; continue; }
+    for (const ch of g){
+      const c = ch.codePointAt(0);
+      if (c >= 0xFE00 && c <= 0xFE0F) continue; // selectores de variación
+      const light = c <= 0x10FF || (c >= 0x2000 && c <= 0x200D) || (c >= 0x2010 && c <= 0x201F) || (c >= 0x2032 && c <= 0x2037);
+      n += light ? 1 : 2;
+    }
+  }
+  return n;
 }
 
-function buildTweets(utcLabel, cities, header){
-  const prefix = `${header}\n\n${utcLabel}\n\n`;
+function buildTweets(utcLabel, cities, header, tagline){
+  const prefix = `${header}\n\n${tagline || utcLabel}\n\n`;
   const single = prefix + cities.join('\n');
   if (twLen(single) <= 280) return [single];
   const parts = [];
@@ -786,13 +999,122 @@ function buildTweets(utcLabel, cities, header){
   for (const city of cities){
     const trial = current.concat([city]);
     const trialText = prefix + trial.join('\n');
-    if (twLen(trialText) + 10 <= 280 || current.length === 0) current = trial;
+    if (twLen(trialText) + 12 <= 280 || current.length === 0) current = trial;
     else { parts.push(current); current = [city]; }
   }
   if (current.length) parts.push(current);
   const n = parts.length;
-  return parts.map((g,i) => prefix + g.join('\n') + `\n\n(${i+1}/${n})`);
+  return parts.map((g,i) => prefix + g.join('\n') + `\n\n🧵 ${i+1}/${n}`);
 }
+
+// ---------------------------------------------------------------------------
+// Hora actual y diferencia horaria (se muestran fuera del tuit)
+// ---------------------------------------------------------------------------
+const BASE_TZ = { '1': 'Europe/Rome', '-3': 'America/Argentina/Buenos_Aires' };
+const WD_SHORT = ['dom','lun','mar','mié','jue','vie','sáb'];
+
+// Offset real (en horas) de una zona IANA en un instante dado, con el
+// horario de verano/invierno que corresponda.
+function tzOffsetAt(tz, date = new Date()){
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(date);
+    const g = t => +parts.find(p => p.type === t).value;
+    const asUTC = Date.UTC(g('year'), g('month') - 1, g('day'), g('hour') % 24, g('minute'), g('second'));
+    return Math.round((asUTC - Math.floor(date.getTime() / 1000) * 1000) / 60000) / 60;
+  } catch (_){ return 0; }
+}
+function baseTz(){
+  const sel = document.getElementById('base-select');
+  return sel ? (BASE_TZ[sel.value] || null) : null;
+}
+// Offset de "tu huso" en un instante (Italia/Argentina con su horario real).
+function baseOffsetAt(date = new Date()){
+  const tz = baseTz();
+  return tz ? tzOffsetAt(tz, date) : baseOffset;
+}
+// Medianoche local de un día en una zona IANA, como instante UTC (ms).
+function zonedMidnightUTC(tz, y, m, d){
+  const guess = Date.UTC(y, m, d);
+  const off = tzOffsetAt(tz, new Date(guess));
+  let t = guess - off * 3600000;
+  const off2 = tzOffsetAt(tz, new Date(t));
+  if (off2 !== off) t = guess - off2 * 3600000;
+  return t;
+}
+function fmtHours(h){
+  const a = Math.abs(h);
+  const H = Math.floor(a + 1e-9);
+  const M = Math.round((a - H) * 60);
+  return M ? `${H} h ${M} min` : `${H} h`;
+}
+function liveAttrs(spec){
+  return spec.tz ? `data-tz="${spec.tz}"` : `data-off="${spec.offset}"`;
+}
+// Filas del bloque de hora: hora actual allá / acá y diferencia.
+function nowRowsHtml(spec, place){
+  const p = escapeHtml(place);
+  return `
+    <div class="time-row live-now" ${liveAttrs(spec)} data-place="${p}"><span class="ico">🕐</span><span>…</span></div>
+    <div class="time-row live-diff" ${liveAttrs(spec)} data-place="${p}"><span class="ico">↔️</span><span>…</span></div>`;
+}
+function remainRowHtml(targetMs, doneText){
+  return `<div class="time-row"><span class="ico">⏳</span><span class="live-remain" data-target="${targetMs}" data-done="${escapeHtml(doneText)}">calculando…</span></div>`;
+}
+function offsetOf(el, now){
+  return el.dataset.tz ? tzOffsetAt(el.dataset.tz, now) : parseFloat(el.dataset.off);
+}
+function updateLiveTimes(){
+  const now = new Date();
+  const bo = baseOffsetAt(now);
+  const here = wallClockInZone(now.getTime(), bo);
+  document.querySelectorAll('.live-now').forEach(el => {
+    const off = offsetOf(el, now);
+    const w = wallClockInZone(now.getTime(), off);
+    const wd = WD_SHORT[new Date(now.getTime() + off * 3600000).getUTCDay()];
+    el.lastElementChild.innerHTML = `Ahora en ${el.dataset.place}: <b>${fmtHM(w.h, w.m)}</b> <span style="opacity:.75">(${wd} ${fmtDM(w.day, w.month)})</span> · en ${escapeHtml(baseLabel)}: <b>${fmtHM(here.h, here.m)}</b>`;
+  });
+  document.querySelectorAll('.live-diff').forEach(el => {
+    const d = Math.round((offsetOf(el, now) - bo) * 4) / 4;
+    if (Math.abs(d) < 1e-9){
+      el.lastElementChild.innerHTML = `<span class="diff">0 h</span> misma hora que ${escapeHtml(baseLabel)}`;
+    } else {
+      const sign = d > 0 ? '+' : '−';
+      el.lastElementChild.innerHTML = `<span class="diff${d < 0 ? ' behind' : ''}">${sign}${fmtHours(d)}</span> ${el.dataset.place} va ${fmtHours(d)} ${d > 0 ? 'adelante' : 'atrás'} de ${escapeHtml(baseLabel)}`;
+    }
+  });
+  document.querySelectorAll('.live-remain').forEach(el => {
+    const diff = +el.dataset.target - now.getTime();
+    el.textContent = diff > 0 ? `Faltan ${formatDuration(diff)}` : el.dataset.done;
+  });
+}
+
+// Tarjeta de vista previa de un tuit (texto centrado, como se verá en X).
+function tweetCardHtml(text, opts = {}){
+  const len = twLen(text);
+  const { part = 1, total = 1, when = '', copyLabel = 'Copiar tuit' } = opts;
+  return `
+    <div class="tweet-card">
+      <div class="tweet-top">
+        <span class="tweet-avatar">HAG</span>
+        <span class="tweet-who"><b>Hernando Gigliotti</b><span>@hagigliotti</span></span>
+        ${total > 1 ? `<span class="tweet-part">🧵 ${part}/${total}</span>` : ''}
+      </div>
+      <div class="tweet-text">${escapeHtml(text)}</div>
+      <div class="tweet-foot">
+        <div class="tweet-meta">
+          <span class="char-count ${len > 280 ? 'warn' : ''}">${len}/280 caracteres</span>
+          ${when ? `<span class="char-count">📅 ${when}</span>` : ''}
+        </div>
+        <a class="tweet-btn" href="${twitterIntentUrl(text)}" target="_blank" rel="noopener noreferrer">🐦 Tuitear</a>
+        <a class="tweet-btn" href="${whatsappUrl(text)}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
+        <button class="copy-btn" data-text="${encodeURIComponent(text)}">${copyLabel}${total > 1 ? ` ${part}/${total}` : ''}</button>
+      </div>
+    </div>`;
+}
+
+const CHEV_SVG = '<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// Qué tarjetas/zonas quedaron abiertas (para no cerrarlas al redibujar).
+const OPEN = new Set();
 
 function escapeHtml(s){
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -833,6 +1155,8 @@ function loadNum(key, fallback){
 async function main(){
   const res = await fetch('data.json', { cache: 'no-store' });
   ZONES = await res.json();
+  TOTAL_ZONES = ZONES.length;
+  if (VITRINA) setupVitrina();
   document.getElementById('zone-count-hint').textContent = ZONES.length;
 
   const customSelect = document.getElementById('base-custom');
@@ -866,9 +1190,18 @@ async function main(){
   document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
     btn.addEventListener('click', () => setTab(btn.dataset.tab));
   });
-  const savedTab = localStorage.getItem('cfg_lastTab');
-  const validTabs = ['newyear', 'christmas', 'other', 'holidays'];
-  setTab(validTabs.includes(savedTab) ? savedTab : 'newyear');
+  const savedTab = localStorage.getItem(TAB_KEY);
+  const validTabs = VITRINA ? ['christmas', 'holidays'] : ['newyear', 'christmas', 'other', 'holidays'];
+  setTab(validTabs.includes(savedTab) ? savedTab : validTabs[0]);
+
+  document.querySelectorAll('[data-expand]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cards = [...document.querySelectorAll(`#${btn.dataset.expand} .cal-card`)];
+      const openAll = cards.some(c => !c.classList.contains('open'));
+      cards.forEach(c => setOpen(c, openAll));
+      btn.textContent = openAll ? '▲ Cerrar todas' : '▼ Abrir todas';
+    });
+  });
 
   document.getElementById('search').addEventListener('input', applyFilter);
   document.getElementById('sort-btn').addEventListener('click', () => {
@@ -939,12 +1272,16 @@ async function main(){
       baseLabel = e.target.value === '1' ? 'Italia' : 'Argentina';
     }
     renderZones();
+    renderCalendars();
+    renderHolidayCountry(holidayCountry);
   });
   document.getElementById('base-custom').addEventListener('change', (e) => {
     baseOffset = parseFloat(e.target.value);
     baseLabel = `tu huso (${formatUtcLabel(baseOffset)})`;
     localStorage.setItem('cfg_baseCustom', e.target.value);
     renderZones();
+    renderCalendars();
+    renderHolidayCountry(holidayCountry);
   });
   document.getElementById('reset-greeting').addEventListener('click', () => {
     localStorage.removeItem('greeting_' + currentMode);
@@ -1042,12 +1379,16 @@ let currentTab = 'newyear';
 function setTab(tab){
   document.querySelectorAll('.tab-btn[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   currentTab = tab;
-  localStorage.setItem('cfg_lastTab', tab);
+  localStorage.setItem(TAB_KEY, tab);
   const isGreetingTab = (tab === 'newyear' || tab === 'christmas');
   document.getElementById('panel-holiday').hidden = !isGreetingTab;
   document.getElementById('panel-other').hidden = (tab !== 'other');
   document.getElementById('panel-holidays').hidden = (tab !== 'holidays');
   document.getElementById('wave-section').hidden = !isGreetingTab;
+  const activeBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+  if (activeBtn && activeBtn.parentElement.scrollWidth > activeBtn.parentElement.clientWidth){
+    activeBtn.parentElement.scrollTo({ left: activeBtn.offsetLeft - 60, behavior: 'smooth' });
+  }
   if (tab === 'holidays') renderHolidayCountry(holidayCountry);
   if (isGreetingTab){
     currentMode = tab;
@@ -1135,11 +1476,11 @@ function updateHero(){
   updateKickerTime();
   document.getElementById('hero-title').innerHTML =
     currentMode === 'newyear'
-      ? `El Año Nuevo <em>${year}</em> le da la vuelta al mundo<br>en ${ZONES.length} husos horarios`
-      : `La Navidad <em>${year}</em> recorre el mundo<br>en ${ZONES.length} husos horarios`;
+      ? `El Año Nuevo <em>${year}</em> le da la vuelta al mundo<br>en ${TOTAL_ZONES} husos horarios`
+      : `La Navidad <em>${year}</em> recorre el mundo<br>en ${TOTAL_ZONES} husos horarios`;
   document.getElementById('page-title').textContent = `Feliz ${label} ${year} — Cada zona horaria del mundo`;
   document.getElementById('page-desc').setAttribute('content',
-    `Los ${ZONES.length} husos horarios del mundo, cuenta regresiva y tuits listos para programar el saludo de ${label} ${year} en cada país.`);
+    `Los ${TOTAL_ZONES} husos horarios del mundo, cuenta regresiva y tuits listos para programar el saludo de ${label} ${year} en cada país.`);
 }
 
 function updateKickerTime(){
@@ -1160,19 +1501,6 @@ function formatDuration(ms){
   return parts.join(' ');
 }
 
-function updateZoneRemains(){
-  const zones = window._activeZones;
-  if (!zones) return;
-  const now = new Date();
-  document.querySelectorAll('.zone-remain').forEach(el => {
-    const z = zones[+el.dataset.idx];
-    if (!z) return;
-    let diff = z._target - now;
-    if (diff < 0) diff += 365 * 24 * 3600000;
-    el.textContent = `Faltan ${formatDuration(diff)} para que sea medianoche ahí`;
-  });
-}
-
 function wallClockInZone(instantMs, offsetHours){
   const d = new Date(instantMs + offsetHours * 3600000);
   return { h: d.getUTCHours(), m: d.getUTCMinutes(), day: d.getUTCDate(), month: d.getUTCMonth() };
@@ -1182,10 +1510,31 @@ function fmtDM(day, month){ return `${String(day).padStart(2,'0')}/${String(mont
 
 function currentZonesWithTweets(){
   const header = document.getElementById('greeting-input').value;
+  const [month, day] = MODE_DATE[currentMode];
+  const year = nextOccurrence(new Date(), month, day).getFullYear();
   return ZONES.map(z => {
     const utc = formatUtcLabel(z.offset);
-    return { offset: z.offset, utc, cities: z.cities, tweets: buildTweets(utc, z.cities, header) };
+    const tagline = ZONE_TAGLINE[currentMode](utc, year);
+    return { offset: z.offset, utc, cities: z.cities, tweets: buildTweets(utc, z.cities, header, tagline) };
   });
+}
+
+// Abre/cierra una zona o tarjeta y recuerda el estado.
+function setOpen(box, open){
+  box.classList.toggle('open', open);
+  const key = box.dataset.key;
+  if (key) open ? OPEN.add(key) : OPEN.delete(key);
+  const head = box.querySelector('.card-head, .zone-head');
+  if (head) head.setAttribute('aria-expanded', String(open));
+}
+
+function setupVitrina(){
+  ZONES = [...ZONES].sort((a, b) => b.offset - a.offset).slice(0, VITRINA_ZONES);
+  document.querySelectorAll('.tab-btn[data-tab="newyear"], .tab-btn[data-tab="other"]').forEach(b => b.remove());
+  const note = document.createElement('p');
+  note.className = 'vitrina-note';
+  note.innerHTML = `Vista previa: los primeros ${VITRINA_ZONES} de ${TOTAL_ZONES} husos horarios. <a href="./" target="_blank" rel="noopener">Ver la página completa ↗</a>`;
+  document.getElementById('zones').after(note);
 }
 
 function renderZones(){
@@ -1200,10 +1549,13 @@ function renderZones(){
   liveZoneIdx = -1;
 
   zonesEl.innerHTML = '';
+  const celebLabel = currentMode === 'christmas' ? 'Navidad' : 'Año Nuevo';
   zones.forEach((z, idx) => {
     const div = document.createElement('div');
-    div.className = 'zone';
+    const key = `z${z.offset}`;
+    div.className = 'zone' + (OPEN.has(key) ? ' open' : '');
     div.dataset.idx = idx;
+    div.dataset.key = key;
 
     const flagChars = (z.cities.join(' ').match(FLAG_GLOBAL_RE) || []);
     const uniqueFlags = [...new Set(flagChars)].slice(0,6).join(' ');
@@ -1213,16 +1565,20 @@ function renderZones(){
     const baseDateStr = fmtDM(baseWall.day, baseWall.month);
 
     div.innerHTML = `
-      <div class="zone-head" data-toggle>
+      <div class="zone-head" data-toggle role="button" tabindex="0" aria-expanded="${OPEN.has(key)}">
         <div class="zone-head-left">
           <span class="utc-tag">${z.utc}</span>
           <span>${uniqueFlags}</span>
           <span class="zone-meta">${z.cities.length} ciudad${z.cities.length>1?'es':''} · ${z.tweets.length} tuit${z.tweets.length>1?'s':''}</span>
         </div>
-        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ${CHEV_SVG}
       </div>
       <div class="zone-body">
-        <p class="zone-schedule">🕛 Cuando sean las <strong>${baseTimeStr} del ${baseDateStr}</strong> (hora de ${baseLabel}), ahí es medianoche.<br>⏳ <span class="zone-remain" data-idx="${idx}">calculando…</span></p>
+        <div class="time-box">
+          <div class="time-row"><span class="ico">🕛</span><span>Cuando sean las <strong>${baseTimeStr} del ${baseDateStr}</strong> (hora de ${escapeHtml(baseLabel)}), ahí es medianoche.</span></div>
+          ${nowRowsHtml({ offset: z.offset }, `${z.utc}`)}
+          ${remainRowHtml(z._target.getTime(), `¡Ya es ${celebLabel} ahí! 🎉`)}
+        </div>
         <ul class="city-list">${z.cities.map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>
         ${showTweets ? `
         <p class="tweets-title">TUITS PARA PROGRAMAR (${z.tweets.length})</p>
@@ -1230,16 +1586,7 @@ function renderZones(){
           const tweetMs = z._target.getTime() + baseOffset*3600000 + i*60000;
           const w = wallClockInZone(tweetMs, 0);
           const when = `${fmtHM(w.h, w.m)} · ${fmtDM(w.day, w.month)} (${baseLabel})`;
-          return `
-          <div class="tweet-card">${escapeHtml(t)}
-            <div class="tweet-foot">
-              <span class="char-count ${twLen(t)>280?'warn':''}">${twLen(t)}/280 caracteres</span>
-              <span class="char-count">📅 ${when}</span>
-              <a class="tweet-btn" href="${twitterIntentUrl(t)}" target="_blank" rel="noopener noreferrer">🐦 Tuitear</a>
-              <a class="tweet-btn" href="${whatsappUrl(t)}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-              <button class="copy-btn" data-text="${encodeURIComponent(t)}">Copiar tuit ${z.tweets.length>1 ? (i+1)+'/'+z.tweets.length : ''}</button>
-            </div>
-          </div>`;
+          return tweetCardHtml(t, { part: i + 1, total: z.tweets.length, when });
         }).join('')}
         ` : `<p class="tweets-title">Tuits ocultos — activalos en el menú ⚙️ Configuración</p>`}
         <button class="close-zone-btn" data-toggle>▲ Cerrar zona</button>
@@ -1283,7 +1630,13 @@ function tickWave(){
 document.addEventListener('click', (e) => {
   const head = e.target.closest('[data-toggle]');
   if(head){
-    head.closest('.zone').classList.toggle('open');
+    const box = head.closest('.zone, .cal-card');
+    const willOpen = !box.classList.contains('open');
+    setOpen(box, willOpen);
+    // Al cerrar desde el botón de abajo, volver a la cabecera.
+    if (!willOpen && head.classList.contains('close-zone-btn')){
+      box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
     return;
   }
   const btn = e.target.closest('.copy-btn');
@@ -1308,6 +1661,13 @@ document.addEventListener('click', (e) => {
     const original = icsBtn.textContent;
     icsBtn.textContent = '¡Descargado!';
     setTimeout(() => { icsBtn.textContent = original; }, 1600);
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.zone-head[data-toggle]')){
+    e.preventDefault();
+    e.target.click();
   }
 });
 
@@ -1404,6 +1764,7 @@ function tick(){
     tickZones(now);
   }
   updateKickerTime();
+  updateLiveTimes();
 }
 
 function renderCountdown(diffMs){
@@ -1467,7 +1828,6 @@ function tickZones(now){
 
   renderCountdown(nearestDiff);
   tickWave();
-  updateZoneRemains();
 }
 
 function tickOther(now){
@@ -1493,8 +1853,7 @@ function tickHolidays(now){
   if (!items.length) return;
   const next = items[0];
   const countryName = holidayCountry === 'ar' ? 'Argentina' : 'Italia';
-  const localOffset = holidayCountry === 'ar' ? -3 : 1;
-  const targetMs = offsetToLocalMidnightUTC(localOffset, next.date.getUTCFullYear(), next.date.getUTCMonth(), next.date.getUTCDate());
+  const targetMs = zonedMidnightUTC(HOLIDAY_TZ[holidayCountry], next.date.getUTCFullYear(), next.date.getUTCMonth(), next.date.getUTCDate());
 
   document.getElementById('live-label').textContent = `PRÓXIMO FERIADO EN ${countryName.toUpperCase()}`;
   document.getElementById('live-zone-utc').textContent = '';
@@ -1515,73 +1874,109 @@ function tickHolidays(now){
 const OTHER_CALENDARS = [
   {
     emoji: '🕎', name: 'Rosh Hashaná (Año Nuevo judío)', sub: 'Comienza al atardecer del día anterior · calendario hebreo',
-    place: 'Jerusalén (UTC+3, horario de verano de Israel)',
+    place: 'Jerusalén (UTC+3, horario de verano de Israel)', city: 'Jerusalén', tz: 'Asia/Jerusalem',
     instances: [
       { utcDate: '2026-09-11T18:00:00+03:00', year: '5787' },
       { utcDate: '2027-10-01T18:00:00+03:00', year: '5788' },
     ],
-    greeting: (year) => `🕎 #ShanaTova ${year}\n🍎🍯✡️🕍🌟`,
+    greeting: (year) => `🕎 ¡Shaná Tová Umetuká! 🍎🍯\nשנה טובה ומתוקה\n\nFeliz Rosh Hashaná ${year}:\nque sea un año bueno y dulce ✨\n\n#ShanaTova #RoshHashana`,
     note: 'Las próximas fechas hebreas están cargadas hasta 5788 (2027); conviene revisar y sumar la siguiente cuando se acerque.'
   },
   {
     emoji: '✝️', name: 'Año Nuevo etíope (Enkutatash)', sub: 'Calendario etíope (7-8 años detrás del gregoriano)',
-    place: 'Adís Abeba (UTC+3)',
+    place: 'Adís Abeba (UTC+3)', city: 'Adís Abeba', tz: 'Africa/Addis_Ababa',
     instances: [
       { utcDate: '2026-09-11T00:00:00+03:00', year: '2019 E.C.' },
       { utcDate: '2027-09-12T00:00:00+03:00', year: '2020 E.C.' },
     ],
-    greeting: (year) => `✝️ #Enkutatash ${year.split(' ')[0]}\n🌼☀️🇪🇹🇪🇷🎉`,
+    greeting: (year) => `🌼 ¡Melkam Addis Amet! 🌼\nመልካም አዲስ ዓመት\n\nFeliz Año Nuevo etíope ${year.split(' ')[0]}\n☀️🇪🇹🇪🇷🎉\n\n#Enkutatash`,
     note: 'También lo celebra Eritrea, y la Iglesia copta de Egipto festeja el mismo día su Año Nuevo (Nayrouz). Cae el 11 de septiembre, o el 12 en el año previo a un bisiesto gregoriano.'
   },
   {
     emoji: '🏮', name: 'Año Nuevo Chino (Año de la Cabra de Fuego)', sub: 'Primer día del calendario lunisolar chino',
-    place: 'Beijing (UTC+8)',
+    place: 'Beijing (UTC+8)', city: 'Beijing', tz: 'Asia/Shanghai',
     instances: [
       { utcDate: '2027-02-06T00:00:00+08:00', year: '2027 · 4725' },
     ],
-    greeting: (year) => `🏮 #ChineseNewYear ${year.split(' ')[0]}\n🧧🐐🎆🥟🐉`,
+    greeting: (year) => `🏮 ¡Feliz Año Nuevo Chino! 🧧\n新年快乐 · 恭喜发财\n\nEmpieza el Año de la Cabra de Fuego ${year.split(' ')[0]}\n🐐🎆🥟🐉\n\n#ChineseNewYear #LunarNewYear`,
     note: 'El mismo Año Nuevo lunar se celebra como Tết en Vietnam y Seollal en Corea (en general, el mismo día).'
   },
   {
+    emoji: '🏔️', name: 'Losar (Año Nuevo tibetano)', sub: 'Calendario lunisolar tibetano · año de la Oveja de Fuego',
+    place: 'Lhasa (UTC+8)', city: 'Lhasa', tz: 'Asia/Shanghai',
+    instances: [
+      { utcDate: '2027-02-07T00:00:00+08:00', year: '2154' },
+    ],
+    greeting: (year) => `🏔️ ¡Losar Tashi Delek! 🙏\nལོ་གསར་བཀྲ་ཤིས་བདེ་ལེགས།\n\nFeliz Año Nuevo tibetano ${year}\n🔥🐑✨\n\n#Losar #TashiDelek`,
+    note: 'También se celebra en Bután, Nepal, Sikkim y Ladakh. Fecha aproximada: puede diferir un día según la tradición local.'
+  },
+  {
+    emoji: '🤫', name: 'Nyepi (Año Nuevo balinés · Día del Silencio)', sub: 'Calendario Saka · 24 horas de silencio total en Bali',
+    place: 'Bali (UTC+8)', city: 'Bali', tz: 'Asia/Makassar',
+    instances: [
+      { utcDate: '2027-03-09T06:00:00+08:00', year: 'Saka 1949' },
+    ],
+    greeting: (year) => `🤫 Selamat Hari Raya Nyepi 🙏\nTahun Baru ${year}\n\nUn día de silencio, ayuno y reflexión en Bali\n🌺🕯️🌙\n\n#Nyepi #Bali`,
+    note: 'Desde las 6:00 y durante 24 horas no hay luces, ruido ni tránsito; hasta el aeropuerto de Bali cierra. La noche anterior se queman los Ogoh-ogoh.'
+  },
+  {
     emoji: '🌸', name: 'Nowruz (Año Nuevo persa)', sub: 'Equinoccio de marzo · calendario solar iraní',
-    place: 'Teherán (UTC+3:30, hora aproximada del equinoccio)',
+    place: 'Teherán (UTC+3:30, hora aproximada del equinoccio)', city: 'Teherán', tz: 'Asia/Tehran',
     instances: [
       { utcDate: '2027-03-20T12:00:00+03:30', year: '1406' },
     ],
-    greeting: (year) => `🌸 #Nowruz ${year}\n🔥🌱🥚🪴✨`,
-    note: 'La hora exacta del equinoccio varía; puede caer el 20 o el 21 según el año.'
+    greeting: (year) => `🌸 ¡Nowruz Mobarak! 🌸\nنوروز مبارک\n\nFeliz Año Nuevo persa ${year}\n🔥🌱🥚🪴✨\n\n#Nowruz #HappyNowruz`,
+    note: 'La hora exacta del equinoccio varía; puede caer el 20 o el 21 según el año. Se celebra en Irán, Afganistán, Asia Central, el Cáucaso y entre los kurdos.'
+  },
+  {
+    emoji: '🪔', name: 'Ugadi · Gudi Padwa (Año Nuevo hindú del sur y oeste de la India)', sub: 'Calendario lunisolar hindú · Plavanga Samvatsara',
+    place: 'Hyderabad / Bombay (UTC+5:30)', city: 'India', tz: 'Asia/Kolkata',
+    instances: [
+      { utcDate: '2027-04-07T00:00:00+05:30', year: 'Shaka 1949' },
+    ],
+    greeting: (year) => `🪔 ¡Ugadi Subhakankshalu! 🌿\nHappy Ugadi · Gudi Padwa\n\nFeliz Año Nuevo hindú ${year}\n🥭🌸🙏✨\n\n#Ugadi #GudiPadwa`,
+    note: 'Se celebra en Andhra Pradesh, Telangana y Karnataka (Ugadi) y en Maharashtra y Goa (Gudi Padwa). Fecha según el calendario lunar.'
   },
   {
     emoji: '💦', name: 'Songkran (Año Nuevo tailandés)', sub: 'Festival del agua · calendario solar tailandés',
-    place: 'Bangkok (UTC+7)',
+    place: 'Bangkok (UTC+7)', city: 'Bangkok', tz: 'Asia/Bangkok',
     recurring: { month: 3, day: 13, offset: 7 }, // fecha gregoriana fija todos los años
     yearLabel: (gregorianYear) => `${gregorianYear + 543} B.E.`,
-    greeting: (year) => `💦 #Songkran ${year}\n🌊🙏🇹🇭🎊`,
+    greeting: (year) => `💦 ¡Suksan Wan Songkran! 💦\nสุขสันต์วันสงกรานต์\n\nFeliz Año Nuevo tailandés ${year}\n🌊🙏🇹🇭🎊\n\n#Songkran`,
     note: 'Se celebra oficialmente del 13 al 15 de abril. Laos (Pi Mai), Camboya (Choul Chnam Thmey), Myanmar (Thingyan) y Sri Lanka (Aluth Avurudu) festejan su Año Nuevo en esos mismos días.'
   },
   {
-    emoji: '🏔️', name: 'Navavarsha (Año Nuevo nepalí, Bikram Sambat)', sub: '1 de Baisakh · calendario oficial de Nepal (~57 años adelante del gregoriano)',
-    place: 'Katmandú (UTC+5:45)',
+    emoji: '🇳🇵', name: 'Navavarsha (Año Nuevo nepalí, Bikram Sambat)', sub: '1 de Baisakh · calendario oficial de Nepal (~57 años adelante del gregoriano)',
+    place: 'Katmandú (UTC+5:45)', city: 'Katmandú', tz: 'Asia/Kathmandu',
     recurring: { month: 3, day: 14, offset: 5.75 },
     yearLabel: (gregorianYear) => `${gregorianYear + 57} B.S.`,
-    greeting: (year) => `🏔️ #NepaliNewYear ${year}\n🇳🇵🌺🎉`,
+    greeting: (year) => `🇳🇵 ¡Naya Barsha ko Shubhakamana! 🌺\nनयाँ वर्षको शुभकामना\n\nFeliz Año Nuevo nepalí ${year}\n🏔️🎉✨\n\n#NepaliNewYear`,
     note: 'Fecha aproximada: el 1 de Baisakh cae el 13 o el 14 de abril según el año.'
   },
   {
+    emoji: '✨', name: 'Matariki (Año Nuevo maorí)', sub: 'Aparición de las Pléyades · feriado nacional de Nueva Zelanda',
+    place: 'Aotearoa / Nueva Zelanda (UTC+12)', city: 'Nueva Zelanda', tz: 'Pacific/Auckland',
+    instances: [
+      { utcDate: '2027-06-25T00:00:00+12:00', year: '2027' },
+    ],
+    greeting: (year) => `✨ Mānawatia a Matariki! ✨\n\nFeliz Año Nuevo maorí ${year}\n🌌⭐🌿🇳🇿\n\n#Matariki`,
+    note: 'Celebra el regreso de las Pléyades (Matariki) al cielo de invierno. Es feriado nacional desde 2022 y siempre cae viernes.'
+  },
+  {
     emoji: '☦️', name: 'Año Nuevo ortodoxo (calendario juliano)', sub: '"Año Nuevo viejo" · 13 días detrás del gregoriano',
-    place: 'Moscú / Belgrado (medianoche en UTC+3)',
+    place: 'Moscú / Belgrado (medianoche en UTC+3)', city: 'Moscú', tz: 'Europe/Moscow',
     recurring: { month: 0, day: 14, offset: 3 },
     yearLabel: (gregorianYear) => `${gregorianYear}`,
-    greeting: (year) => `☦️ ¡Feliz Año Nuevo ortodoxo ${year}!\n🇷🇸🇷🇺🇲🇰🇲🇪🥂✨`,
+    greeting: (year) => `☦️ ¡Feliz Año Nuevo ortodoxo! 🥂\nС Новым годом · Срећна Нова година\n\n${year} según el calendario juliano\n🇷🇸🇷🇺🇲🇰🇲🇪✨\n\n#StaraNovaGodina`,
     note: 'Se festeja la noche del 13 al 14 de enero en Serbia, Rusia, Macedonia del Norte, Montenegro y otras comunidades que siguen el calendario juliano.'
   },
   {
     emoji: '🌙', name: 'Año Nuevo islámico (1 Muharram)', sub: 'Calendario lunar Hijri — depende del avistamiento de la luna',
-    place: 'La Meca (UTC+3)',
+    place: 'La Meca (UTC+3)', city: 'La Meca', tz: 'Asia/Riyadh',
     instances: [
       { utcDate: '2027-06-05T00:00:00+03:00', year: '1449 AH' },
     ],
-    greeting: (year) => `🌙 #IslamicNewYear ${year}\n🕌⭐️🤲`,
+    greeting: (year) => `🌙 ¡Feliz Año Nuevo islámico! 🕌\nكل عام وأنتم بخير\n\nComienza el año ${year}\n⭐️🤲✨\n\n#HijriNewYear #IslamicNewYear`,
     note: 'Fecha aproximada: el calendario Hijri se confirma por avistamiento lunar y puede variar ±1 día.'
   },
 ];
@@ -1644,36 +2039,50 @@ function renderCalendars(){
     const italy = new Intl.DateTimeFormat('es-AR', { dateStyle:'long', timeStyle:'short', timeZone:'Europe/Rome' }).format(d);
     const arg = new Intl.DateTimeFormat('es-AR', { dateStyle:'long', timeStyle:'short', timeZone:'America/Argentina/Buenos_Aires' }).format(d);
     const greeting = c.greeting(inst.year);
+    const key = `c-${c.name}`;
     let recentLine = '';
+    let headWhen;
     if (recent){
       const ago = Math.floor((now - d) / 86400000);
       const nextD = new Date(nextInst.utcDate);
       const nextTxt = nextD > now ? ` · próximo: ${epicenterDate(c, nextInst)} (año ${nextInst.year})` : '';
       recentLine = `<p class="cal-recent">🎉 Recién celebrado — ${ago === 0 ? 'hoy' : ago === 1 ? 'ayer' : `hace ${ago} días`}${nextTxt}</p>`;
+      headWhen = `<span class="soon">recién celebrado</span>`;
+    } else {
+      const days = Math.ceil((d - now) / 86400000);
+      headWhen = days <= 1 ? `<span class="soon">${days <= 0 ? 'hoy' : 'mañana'}</span>` : `faltan ${days} días`;
     }
+    // La cuenta regresiva apunta siempre a la próxima fecha.
+    const nextTarget = new Date(nextInst.utcDate).getTime();
     return `
-      <div class="cal-card">
+      <div class="cal-card${OPEN.has(key) ? ' open' : ''}" data-key="${escapeHtml(key)}">
         ${recentLine}
-        <h3>${c.emoji} ${c.name}</h3>
-        <p class="cal-sub">${c.sub} · año ${inst.year}</p>
-        <dl>
-          <dt>EPICENTRO</dt><dd>${c.place}</dd>
-          <dt>HORA DE ITALIA</dt><dd>${italy}</dd>
-          <dt>HORA DE ARGENTINA</dt><dd>${arg}</dd>
-        </dl>
-        ${c.note ? `<p class="cal-note">${c.note}</p>` : ''}
-        ${showTweets ? `
-        <div class="tweet-card">${escapeHtml(greeting)}
-          <div class="tweet-foot">
-            <span class="char-count">${twLen(greeting)}/280 caracteres</span>
-            <a class="tweet-btn" href="${twitterIntentUrl(greeting)}" target="_blank" rel="noopener noreferrer">🐦 Tuitear</a>
-            <a class="tweet-btn" href="${whatsappUrl(greeting)}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-            <button class="copy-btn" data-text="${encodeURIComponent(greeting)}">Copiar saludo</button>
+        <button class="card-head" type="button" data-toggle aria-expanded="${OPEN.has(key)}">
+          <span class="card-emoji">${c.emoji}</span>
+          <span class="card-titles">
+            <span class="card-title">${c.name}</span>
+            <span class="card-sub">${epicenterDate(c, inst)} · ${headWhen}</span>
+          </span>
+          ${CHEV_SVG}
+        </button>
+        <div class="card-body">
+          <p class="cal-sub">${c.sub} · año ${inst.year}</p>
+          <dl>
+            <dt>EPICENTRO</dt><dd>${c.place}</dd>
+            <dt>HORA DE ITALIA</dt><dd>${italy}</dd>
+            <dt>HORA DE ARGENTINA</dt><dd>${arg}</dd>
+          </dl>
+          <div class="time-box">
+            ${nowRowsHtml({ tz: c.tz }, c.city)}
+            ${remainRowHtml(nextTarget, '¡Se está celebrando! 🎉')}
           </div>
-        </div>` : ''}
-        <div class="tweet-foot" style="margin-top:12px; padding-top:0; border-top:none;">
-          <button class="ics-btn" data-ics-title="${encodeURIComponent(c.name)}" data-ics-desc="${encodeURIComponent(c.sub + ' · ' + c.place)}" data-ics-start="${d.toISOString()}" data-ics-allday="0">📅 Agendar</button>
-          ${showTweets ? '' : shareButtons(greeting, 'Copiar saludo')}
+          ${c.note ? `<p class="cal-note">${c.note}</p>` : ''}
+          ${showTweets ? tweetCardHtml(greeting, { copyLabel: 'Copiar saludo' }) : ''}
+          <div class="card-actions">
+            <button class="ics-btn" data-ics-title="${encodeURIComponent(c.name)}" data-ics-desc="${encodeURIComponent(c.sub + ' · ' + c.place)}" data-ics-start="${d.toISOString()}" data-ics-allday="0">📅 Agendar</button>
+            ${showTweets ? '' : shareButtons(greeting, 'Copiar saludo')}
+          </div>
+          <button class="close-zone-btn" data-toggle style="margin-top:14px;">▲ Cerrar</button>
         </div>
       </div>`;
   }).join('');
@@ -1822,32 +2231,62 @@ function renderHolidayCountry(code){
   }
 }
 
+const HOLIDAY_TZ = { ar: 'America/Argentina/Buenos_Aires', it: 'Europe/Rome' };
+const HOLIDAY_COUNTRY_NAME = { ar: 'Argentina', it: 'Italia' };
+const WD_IT = ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+
+// Tuit completo de un feriado: saludo + fecha + hashtag del país.
+function holidayTweet(h, code){
+  if (!h.tweet) return '';
+  const dd = String(h.date.getUTCDate()).padStart(2, '0');
+  const mm = String(h.date.getUTCMonth() + 1).padStart(2, '0');
+  const wd = (code === 'it' ? WD_IT : WEEKDAY_LABEL)[h.date.getUTCDay()];
+  const tag = code === 'it' ? '#Italia' : '#Argentina';
+  return `${h.tweet}\n\n📅 ${wd} ${dd}/${mm}/${h.date.getUTCFullYear()}\n${tag}`;
+}
+
 function renderHolidayGrid(gridId, getListFn){
   const grid = document.getElementById(gridId);
   const items = upcomingHolidays(getListFn);
+  const code = holidayCountry;
+  const tz = HOLIDAY_TZ[code];
+  const country = HOLIDAY_COUNTRY_NAME[code];
   grid.innerHTML = items.map(h => {
     const dd = String(h.date.getUTCDate()).padStart(2, '0');
     const mm = String(h.date.getUTCMonth() + 1).padStart(2, '0');
     const wd = WEEKDAY_LABEL[h.date.getUTCDay()];
     const days = daysUntilHoliday(h.date);
-    const when = days === 0 ? 'hoy' : days === 1 ? 'mañana' : `faltan ${days} días`;
-    const showTweet = showTweets && h.tweet;
+    const when = days === 0 ? '<span class="soon">hoy</span>' : days === 1 ? '<span class="soon">mañana</span>' : `faltan ${days} días`;
+    const tweet = holidayTweet(h, code);
+    const key = `h-${code}-${h.name}-${h.date.toISOString().slice(0, 10)}`;
+    const start = zonedMidnightUTC(tz, h.date.getUTCFullYear(), h.date.getUTCMonth(), h.date.getUTCDate());
+    const bw = wallClockInZone(start, baseOffsetAt(new Date(start)));
+    const sameAsBase = Math.abs(tzOffsetAt(tz, new Date(start)) - baseOffsetAt(new Date(start))) < 1e-9;
+    const startRow = sameAsBase
+      ? `Empieza a las <strong>00:00 del ${dd}/${mm}</strong> en ${country} (tu mismo huso).`
+      : `Cuando sean las <strong>${fmtHM(bw.h, bw.m)} del ${fmtDM(bw.day, bw.month)}</strong> (hora de ${escapeHtml(baseLabel)}), en ${country} empieza el feriado.`;
     const icsBtn = `<button class="ics-btn" data-ics-title="${encodeURIComponent(h.name)}" data-ics-desc="${encodeURIComponent((h.note || '').replace(/<[^>]+>/g, ''))}" data-ics-start="${h.date.toISOString()}" data-ics-allday="1">📅 Agendar</button>`;
     return `
-      <div class="cal-card">
-        <h3>${h.emoji} ${h.name}</h3>
-        <p class="cal-sub">${wd}, ${dd}/${mm}/${h.date.getUTCFullYear()} · ${when}</p>
-        ${h.note ? `<p class="cal-note">${h.note}</p>` : ''}
-        ${showTweet ? `
-        <div class="tweet-card">${escapeHtml(h.tweet)}
-          <div class="tweet-foot">
-            <span class="char-count">${twLen(h.tweet)}/280 caracteres</span>
-            <a class="tweet-btn" href="${twitterIntentUrl(h.tweet)}" target="_blank" rel="noopener noreferrer">🐦 Tuitear</a>
-            <a class="tweet-btn" href="${whatsappUrl(h.tweet)}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-            <button class="copy-btn" data-text="${encodeURIComponent(h.tweet)}">Copiar tuit</button>
+      <div class="cal-card${OPEN.has(key) ? ' open' : ''}" data-key="${escapeHtml(key)}">
+        <button class="card-head" type="button" data-toggle aria-expanded="${OPEN.has(key)}">
+          <span class="card-emoji">${h.emoji}</span>
+          <span class="card-titles">
+            <span class="card-title">${h.name}</span>
+            <span class="card-sub">${wd} ${dd}/${mm}/${h.date.getUTCFullYear()} · ${when}</span>
+          </span>
+          ${CHEV_SVG}
+        </button>
+        <div class="card-body">
+          <div class="time-box">
+            <div class="time-row"><span class="ico">🕛</span><span>${startRow}</span></div>
+            ${nowRowsHtml({ tz }, country)}
+            ${remainRowHtml(start, '¡Hoy es feriado! 🎉')}
           </div>
-        </div>` : ''}
-        <div class="tweet-foot" style="margin-top:12px; padding-top:0; border-top:none;">${icsBtn}${showTweets ? '' : shareButtons(h.tweet, 'Copiar tuit')}</div>
+          ${h.note ? `<p class="cal-note">${h.note}</p>` : ''}
+          ${showTweets && tweet ? tweetCardHtml(tweet) : ''}
+          <div class="card-actions">${icsBtn}${showTweets ? '' : shareButtons(tweet, 'Copiar tuit')}</div>
+          <button class="close-zone-btn" data-toggle style="margin-top:14px;">▲ Cerrar</button>
+        </div>
       </div>`;
   }).join('');
 }

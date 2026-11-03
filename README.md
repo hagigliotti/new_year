@@ -32,7 +32,7 @@ Cada zona (Navidad / Año Nuevo), cada tarjeta de Otros calendarios y cada feria
 
 ## Vista para la web (`?vitrina=1`)
 
-`https://hagigliotti.github.io/new_year/?vitrina=1` es la versión que se ve dentro del iPhone en `hagigliotti.github.io/website`: solo muestra **Navidad** (los primeros 5 husos, de UTC+14 en adelante) y **Feriados**.
+`https://hagigliotti.github.io/new_year/?vitrina=1` es la versión que se ve dentro del iPhone en `hagigliotti.github.io/website`: se pueden usar **Navidad** (los primeros 5 husos, de UTC+14 en adelante) y **Feriados**; las pestañas de Año Nuevo y Otros calendarios se ven, pero muestran un aviso de que no es el programa completo, con un enlace a la página.
 
 ## Otros calendarios
 

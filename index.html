@@ -674,6 +674,16 @@
     display:flex; justify-content:center; flex-wrap:wrap; gap:4px 14px;
   }
   .card-actions{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+  .tab-btn.locked::after{content:' 🔒'; font-size:.75em; opacity:.7;}
+  .locked-box{
+    margin:28px auto 0; max-width:520px; text-align:center;
+    background:var(--panel); border:1px dashed var(--line); border-radius:var(--radius);
+    padding:28px 22px;
+  }
+  .locked-box h3{margin:0 0 10px; font-size:1.2rem;}
+  .locked-box p{color:var(--text-dim); font-size:.92rem; margin:0 0 18px;}
+  .locked-box .locked-ico{font-size:2rem; margin:0 0 6px;}
+  .locked-box .copy-btn{display:inline-block; text-decoration:none; padding:10px 16px;}
   .vitrina-note{
     margin:18px 0 0;
     font-size:.82rem;
@@ -821,6 +831,15 @@
       <div class="cal-grid" id="cal-grid"></div>
     </section>
 
+    <section id="panel-locked" hidden>
+      <div class="locked-box">
+        <p class="locked-ico">🔒</p>
+        <h3><span id="locked-what">Esta sección</span>: solo en la página completa</h3>
+        <p>Esto no es el programa completo: acá solo se pueden probar <b>Navidad</b> (los primeros 5 husos horarios) y <b>Feriados</b>. Todo lo demás está en la página completa.</p>
+        <a class="copy-btn" href="./" target="_blank" rel="noopener">Abrir la página completa ↗</a>
+      </div>
+    </section>
+
     <section id="panel-holidays" hidden>
       <div class="toolbar" style="margin-top:28px;">
         <label class="base-select">País:
@@ -927,20 +946,24 @@ const VITRINA_ZONES = 5;
 const TAB_KEY = VITRINA ? 'cfg_lastTab_vitrina' : 'cfg_lastTab';
 let TOTAL_ZONES = 37;
 
+// Saludo por defecto: dos renglones del mismo ancho. Cada emoji (también
+// 2️⃣) ocupa lo mismo que ~2 letras —igual que lo cuenta X—, así que el
+// renglón de emojis tiene 13 emojis para igualar al renglón del hashtag.
 const HEADER_DEFAULTS = {
   newyear: (year) => {
     const y = String(year).padStart(4,'0');
-    return `🎆✨ ${emojify(y.slice(0,2))} #HappyNewYear ${emojify(y.slice(2))} ✨🎆\n🥂🍾🎇🌟🎉💫`;
+    return `🎆 ${emojify(y.slice(0,2))} #HappyNewYear ${emojify(y.slice(2))} ✨\n🥂🍾🎇🎉🎊🥳🪅🕛🌟💫🍀✨🎆`;
   },
   christmas: (year) => {
     const y = String(year).padStart(4,'0');
-    return `🎄✨ ${emojify(y.slice(0,2))} #FelizNavidad ${emojify(y.slice(2))} ✨🎄\n🎅🦌❄️🎁⛄🕯️🌟`;
+    return `🎄 ${emojify(y.slice(0,2))} #MerryChristmas ${emojify(y.slice(2))} ✨\n🎅🤶🦌❄️🎁⛄🔔🕯️🍪🎶🌟✨🎄`;
   }
 };
-// Segunda línea del tuit de cada zona, debajo del saludo.
-const ZONE_TAGLINE = {
-  newyear: (utc, year) => `🕛 ${utc} · ¡Ya es ${year} en…`,
-  christmas: (utc) => `🕛 ${utc} · ¡Ya es Navidad en…`
+// Saludos por defecto de versiones anteriores: si alguien tiene guardado uno
+// de estos (sin haberlo editado), se reemplaza por el nuevo.
+const OLD_HEADER_DEFAULTS = {
+  newyear: (y) => [`${emojify(y.slice(0,2))} #HappyNewYear ${emojify(y.slice(2))}\n🎇🥂🌟🪅💫💙🎉✨🍾🎆`, `🎆✨ ${emojify(y.slice(0,2))} #HappyNewYear ${emojify(y.slice(2))} ✨🎆\n🥂🍾🎇🌟🎉💫`],
+  christmas: (y) => [`${emojify(y.slice(0,2))} #FelizNavidad ${emojify(y.slice(2))}\n🎄🎅🦌❄️🎁⛄🕯️✨🌟`, `🎄✨ ${emojify(y.slice(0,2))} #FelizNavidad ${emojify(y.slice(2))} ✨🎄\n🎅🦌❄️🎁⛄🕯️🌟`]
 };
 const MODE_DATE = { newyear: [0,1], christmas: [11,25] }; // [month(0-idx), day]
 const MODE_LABEL = { newyear: 'Año Nuevo', christmas: 'Navidad' };
@@ -990,21 +1013,36 @@ function twLen(s){
   return n;
 }
 
-function buildTweets(utcLabel, cities, header, tagline){
-  const prefix = `${header}\n\n${tagline || utcLabel}\n\n`;
+// Arma el/los tuit(s) de una zona:
+//   🕛 UTC+14
+//   <saludo, 2 renglones>
+//
+//   <ciudades>
+// Si no entra en 280, reparte las ciudades en un hilo llenando cada tuit
+// hasta el máximo exacto, con "🧵 1/3" al final.
+const TWEET_MAX = 280;
+function buildTweets(utcLabel, cities, header){
+  const prefix = `🕛 ${utcLabel}\n${header.trim()}\n\n`;
   const single = prefix + cities.join('\n');
-  if (twLen(single) <= 280) return [single];
-  const parts = [];
-  let current = [];
-  for (const city of cities){
-    const trial = current.concat([city]);
-    const trialText = prefix + trial.join('\n');
-    if (twLen(trialText) + 12 <= 280 || current.length === 0) current = trial;
-    else { parts.push(current); current = [city]; }
+  if (twLen(single) <= TWEET_MAX) return [single];
+  let guess = 2;
+  for (let tries = 0; tries < 5; tries++){
+    const footerLen = twLen(`\n\n🧵 ${guess}/${guess}`);
+    const parts = [];
+    let current = [];
+    for (const city of cities){
+      const trial = current.concat([city]);
+      if (current.length === 0 || twLen(prefix + trial.join('\n')) + footerLen <= TWEET_MAX) current = trial;
+      else { parts.push(current); current = [city]; }
+    }
+    if (current.length) parts.push(current);
+    if (String(parts.length).length <= String(guess).length){
+      const n = parts.length;
+      return parts.map((g, i) => prefix + g.join('\n') + `\n\n🧵 ${i+1}/${n}`);
+    }
+    guess = parts.length;
   }
-  if (current.length) parts.push(current);
-  const n = parts.length;
-  return parts.map((g,i) => prefix + g.join('\n') + `\n\n🧵 ${i+1}/${n}`);
+  return [single];
 }
 
 // ---------------------------------------------------------------------------
@@ -1191,7 +1229,7 @@ async function main(){
     btn.addEventListener('click', () => setTab(btn.dataset.tab));
   });
   const savedTab = localStorage.getItem(TAB_KEY);
-  const validTabs = VITRINA ? ['christmas', 'holidays'] : ['newyear', 'christmas', 'other', 'holidays'];
+  const validTabs = VITRINA ? ['christmas', 'holidays', 'newyear', 'other'] : ['newyear', 'christmas', 'other', 'holidays'];
   setTab(validTabs.includes(savedTab) ? savedTab : validTabs[0]);
 
   document.querySelectorAll('[data-expand]').forEach(btn => {
@@ -1381,10 +1419,15 @@ function setTab(tab){
   currentTab = tab;
   localStorage.setItem(TAB_KEY, tab);
   const isGreetingTab = (tab === 'newyear' || tab === 'christmas');
-  document.getElementById('panel-holiday').hidden = !isGreetingTab;
-  document.getElementById('panel-other').hidden = (tab !== 'other');
+  const locked = VITRINA && VITRINA_LOCKED.includes(tab);
+  document.getElementById('panel-holiday').hidden = !isGreetingTab || locked;
+  document.getElementById('panel-other').hidden = (tab !== 'other') || locked;
   document.getElementById('panel-holidays').hidden = (tab !== 'holidays');
-  document.getElementById('wave-section').hidden = !isGreetingTab;
+  document.getElementById('panel-locked').hidden = !locked;
+  document.getElementById('wave-section').hidden = !isGreetingTab || locked;
+  if (locked){
+    document.getElementById('locked-what').textContent = tab === 'newyear' ? '🎆 Año Nuevo' : '🌙 Otros calendarios';
+  }
   const activeBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
   if (activeBtn && activeBtn.parentElement.scrollWidth > activeBtn.parentElement.clientWidth){
     activeBtn.parentElement.scrollTo({ left: activeBtn.offsetLeft - 60, behavior: 'smooth' });
@@ -1452,7 +1495,15 @@ function defaultGreeting(){
 }
 
 function loadGreeting(){
-  const saved = localStorage.getItem('greeting_' + currentMode);
+  let saved = localStorage.getItem('greeting_' + currentMode);
+  if (saved !== null){
+    const [month, day] = MODE_DATE[currentMode];
+    const y = String(nextOccurrence(new Date(), month, day).getFullYear()).padStart(4, '0');
+    if (OLD_HEADER_DEFAULTS[currentMode](y).includes(saved)){
+      localStorage.removeItem('greeting_' + currentMode);
+      saved = null;
+    }
+  }
   document.getElementById('greeting-input').value = saved !== null ? saved : defaultGreeting();
   updateGreetingCount();
 }
@@ -1514,8 +1565,7 @@ function currentZonesWithTweets(){
   const year = nextOccurrence(new Date(), month, day).getFullYear();
   return ZONES.map(z => {
     const utc = formatUtcLabel(z.offset);
-    const tagline = ZONE_TAGLINE[currentMode](utc, year);
-    return { offset: z.offset, utc, cities: z.cities, tweets: buildTweets(utc, z.cities, header, tagline) };
+    return { offset: z.offset, utc, cities: z.cities, tweets: buildTweets(utc, z.cities, header) };
   });
 }
 
@@ -1528,13 +1578,14 @@ function setOpen(box, open){
   if (head) head.setAttribute('aria-expanded', String(open));
 }
 
+const VITRINA_LOCKED = ['newyear', 'other'];
 function setupVitrina(){
   ZONES = [...ZONES].sort((a, b) => b.offset - a.offset).slice(0, VITRINA_ZONES);
-  document.querySelectorAll('.tab-btn[data-tab="newyear"], .tab-btn[data-tab="other"]').forEach(b => b.remove());
   const note = document.createElement('p');
   note.className = 'vitrina-note';
   note.innerHTML = `Vista previa: los primeros ${VITRINA_ZONES} de ${TOTAL_ZONES} husos horarios. <a href="./" target="_blank" rel="noopener">Ver la página completa ↗</a>`;
   document.getElementById('zones').after(note);
+  document.querySelectorAll(VITRINA_LOCKED.map(t => `.tab-btn[data-tab="${t}"]`).join(',')).forEach(b => b.classList.add('locked'));
 }
 
 function renderZones(){
@@ -1879,7 +1930,7 @@ const OTHER_CALENDARS = [
       { utcDate: '2026-09-11T18:00:00+03:00', year: '5787' },
       { utcDate: '2027-10-01T18:00:00+03:00', year: '5788' },
     ],
-    greeting: (year) => `🕎 ¡Shaná Tová Umetuká! 🍎🍯\nשנה טובה ומתוקה\n\nFeliz Rosh Hashaná ${year}:\nque sea un año bueno y dulce ✨\n\n#ShanaTova #RoshHashana`,
+    greeting: (year) => `🕎 Shana Tova! Happy Rosh Hashanah ${year} 🍎🍯\nשנה טובה ומתוקה\n🇪🇸 ¡Feliz Año Nuevo judío!\n🇮🇹 Felice Anno Nuovo ebraico!\n\nApples dipped in honey for a sweet year, and the shofar calls us to reflect ✨\n#ShanaTova #RoshHashanah`,
     note: 'Las próximas fechas hebreas están cargadas hasta 5788 (2027); conviene revisar y sumar la siguiente cuando se acerque.'
   },
   {
@@ -1889,7 +1940,7 @@ const OTHER_CALENDARS = [
       { utcDate: '2026-09-11T00:00:00+03:00', year: '2019 E.C.' },
       { utcDate: '2027-09-12T00:00:00+03:00', year: '2020 E.C.' },
     ],
-    greeting: (year) => `🌼 ¡Melkam Addis Amet! 🌼\nመልካም አዲስ ዓመት\n\nFeliz Año Nuevo etíope ${year.split(' ')[0]}\n☀️🇪🇹🇪🇷🎉\n\n#Enkutatash`,
+    greeting: (year) => `🌼 Happy Ethiopian New Year ${year.split(' ')[0]}! ☀️\nመልካም አዲስ ዓመት\n🇪🇸 ¡Feliz Año Nuevo etíope!\n🇮🇹 Felice Anno Nuovo etiope!\n\nEnkutatash marks the end of the rainy season, when the yellow Meskel daisies bloom 🇪🇹🇪🇷\n#Enkutatash`,
     note: 'También lo celebra Eritrea, y la Iglesia copta de Egipto festeja el mismo día su Año Nuevo (Nayrouz). Cae el 11 de septiembre, o el 12 en el año previo a un bisiesto gregoriano.'
   },
   {
@@ -1898,7 +1949,7 @@ const OTHER_CALENDARS = [
     instances: [
       { utcDate: '2027-02-06T00:00:00+08:00', year: '2027 · 4725' },
     ],
-    greeting: (year) => `🏮 ¡Feliz Año Nuevo Chino! 🧧\n新年快乐 · 恭喜发财\n\nEmpieza el Año de la Cabra de Fuego ${year.split(' ')[0]}\n🐐🎆🥟🐉\n\n#ChineseNewYear #LunarNewYear`,
+    greeting: (year) => `🏮 Happy Lunar New Year ${year.split(' ')[0]}! 🧧\n新年快乐 · 恭喜发财\n🇪🇸 ¡Feliz Año Nuevo chino!\n🇮🇹 Felice Anno Nuovo cinese!\n\nThe Year of the Fire Goat begins: red envelopes, dumplings and fireworks 🐐🥟🎆\n#ChineseNewYear #LunarNewYear`,
     note: 'El mismo Año Nuevo lunar se celebra como Tết en Vietnam y Seollal en Corea (en general, el mismo día).'
   },
   {
@@ -1907,7 +1958,7 @@ const OTHER_CALENDARS = [
     instances: [
       { utcDate: '2027-02-07T00:00:00+08:00', year: '2154' },
     ],
-    greeting: (year) => `🏔️ ¡Losar Tashi Delek! 🙏\nལོ་གསར་བཀྲ་ཤིས་བདེ་ལེགས།\n\nFeliz Año Nuevo tibetano ${year}\n🔥🐑✨\n\n#Losar #TashiDelek`,
+    greeting: (year) => `🏔️ Losar Tashi Delek! Happy Tibetan New Year ${year} 🙏\nལོ་གསར་བཀྲ་ཤིས་བདེ་ལེགས།\n🇪🇸 ¡Feliz Año Nuevo tibetano!\n🇮🇹 Felice Anno Nuovo tibetano!\n\nYear of the Fire Sheep: new prayer flags, butter lamps and family feasts 🔥🐑\n#Losar`,
     note: 'También se celebra en Bután, Nepal, Sikkim y Ladakh. Fecha aproximada: puede diferir un día según la tradición local.'
   },
   {
@@ -1916,7 +1967,7 @@ const OTHER_CALENDARS = [
     instances: [
       { utcDate: '2027-03-09T06:00:00+08:00', year: 'Saka 1949' },
     ],
-    greeting: (year) => `🤫 Selamat Hari Raya Nyepi 🙏\nTahun Baru ${year}\n\nUn día de silencio, ayuno y reflexión en Bali\n🌺🕯️🌙\n\n#Nyepi #Bali`,
+    greeting: (year) => `🤫 Happy Nyepi! Balinese New Year ${year} 🙏\nSelamat Hari Raya Nyepi\n🇪🇸 ¡Feliz Nyepi, Año Nuevo balinés!\n🇮🇹 Buon Nyepi, Capodanno balinese!\n\n24 hours of silence: no lights, no traffic, no noise. Even Bali's airport closes 🌙\n#Nyepi #Bali`,
     note: 'Desde las 6:00 y durante 24 horas no hay luces, ruido ni tránsito; hasta el aeropuerto de Bali cierra. La noche anterior se queman los Ogoh-ogoh.'
   },
   {
@@ -1925,7 +1976,7 @@ const OTHER_CALENDARS = [
     instances: [
       { utcDate: '2027-03-20T12:00:00+03:30', year: '1406' },
     ],
-    greeting: (year) => `🌸 ¡Nowruz Mobarak! 🌸\nنوروز مبارک\n\nFeliz Año Nuevo persa ${year}\n🔥🌱🥚🪴✨\n\n#Nowruz #HappyNowruz`,
+    greeting: (year) => `🌸 Happy Nowruz! Persian New Year ${year} 🌱\nنوروز مبارک\n🇪🇸 ¡Feliz Nowruz, Año Nuevo persa!\n🇮🇹 Buon Nowruz, Capodanno persiano!\n\nSpring starts with the equinox: the Haft-sin table, jumping over fire and new beginnings 🔥🥚\n#Nowruz`,
     note: 'La hora exacta del equinoccio varía; puede caer el 20 o el 21 según el año. Se celebra en Irán, Afganistán, Asia Central, el Cáucaso y entre los kurdos.'
   },
   {
@@ -1934,7 +1985,7 @@ const OTHER_CALENDARS = [
     instances: [
       { utcDate: '2027-04-07T00:00:00+05:30', year: 'Shaka 1949' },
     ],
-    greeting: (year) => `🪔 ¡Ugadi Subhakankshalu! 🌿\nHappy Ugadi · Gudi Padwa\n\nFeliz Año Nuevo hindú ${year}\n🥭🌸🙏✨\n\n#Ugadi #GudiPadwa`,
+    greeting: (year) => `🪔 Happy Ugadi & Gudi Padwa! Hindu New Year ${year} 🌿\nउगादी · गुढीपाडवा शुभेच्छा\n🇪🇸 ¡Feliz Año Nuevo hindú!\n🇮🇹 Felice Anno Nuovo indù!\n\nMango leaves on the door and Ugadi pachadi: sweet, sour and bitter, like the year ahead 🥭\n#Ugadi #GudiPadwa`,
     note: 'Se celebra en Andhra Pradesh, Telangana y Karnataka (Ugadi) y en Maharashtra y Goa (Gudi Padwa). Fecha según el calendario lunar.'
   },
   {
@@ -1942,7 +1993,7 @@ const OTHER_CALENDARS = [
     place: 'Bangkok (UTC+7)', city: 'Bangkok', tz: 'Asia/Bangkok',
     recurring: { month: 3, day: 13, offset: 7 }, // fecha gregoriana fija todos los años
     yearLabel: (gregorianYear) => `${gregorianYear + 543} B.E.`,
-    greeting: (year) => `💦 ¡Suksan Wan Songkran! 💦\nสุขสันต์วันสงกรานต์\n\nFeliz Año Nuevo tailandés ${year}\n🌊🙏🇹🇭🎊\n\n#Songkran`,
+    greeting: (year) => `💦 Happy Songkran! Thai New Year ${year} 🙏\nสุขสันต์วันสงกรานต์\n🇪🇸 ¡Feliz Año Nuevo tailandés!\n🇮🇹 Felice Anno Nuovo thailandese!\n\nThe water festival: splashing water washes away the old year and brings good luck 🌊🇹🇭\n#Songkran`,
     note: 'Se celebra oficialmente del 13 al 15 de abril. Laos (Pi Mai), Camboya (Choul Chnam Thmey), Myanmar (Thingyan) y Sri Lanka (Aluth Avurudu) festejan su Año Nuevo en esos mismos días.'
   },
   {
@@ -1950,7 +2001,7 @@ const OTHER_CALENDARS = [
     place: 'Katmandú (UTC+5:45)', city: 'Katmandú', tz: 'Asia/Kathmandu',
     recurring: { month: 3, day: 14, offset: 5.75 },
     yearLabel: (gregorianYear) => `${gregorianYear + 57} B.S.`,
-    greeting: (year) => `🇳🇵 ¡Naya Barsha ko Shubhakamana! 🌺\nनयाँ वर्षको शुभकामना\n\nFeliz Año Nuevo nepalí ${year}\n🏔️🎉✨\n\n#NepaliNewYear`,
+    greeting: (year) => `🇳🇵 Happy Nepali New Year ${year}! 🌺\nनयाँ वर्षको शुभकामना\n🇪🇸 ¡Feliz Año Nuevo nepalí!\n🇮🇹 Felice Anno Nuovo nepalese!\n\n1 Baisakh opens the Bikram Sambat year, about 57 years ahead of the Gregorian calendar 🏔️\n#NepaliNewYear`,
     note: 'Fecha aproximada: el 1 de Baisakh cae el 13 o el 14 de abril según el año.'
   },
   {
@@ -1959,7 +2010,7 @@ const OTHER_CALENDARS = [
     instances: [
       { utcDate: '2027-06-25T00:00:00+12:00', year: '2027' },
     ],
-    greeting: (year) => `✨ Mānawatia a Matariki! ✨\n\nFeliz Año Nuevo maorí ${year}\n🌌⭐🌿🇳🇿\n\n#Matariki`,
+    greeting: (year) => `✨ Mānawatia a Matariki! Happy Māori New Year ${year} 🌌\n🇪🇸 ¡Feliz Año Nuevo maorí!\n🇮🇹 Felice Capodanno maori!\n\nThe Pleiades rise again in the winter sky: a time to remember those who passed, celebrate the present and plan the future ⭐🌿🇳🇿\n#Matariki`,
     note: 'Celebra el regreso de las Pléyades (Matariki) al cielo de invierno. Es feriado nacional desde 2022 y siempre cae viernes.'
   },
   {
@@ -1967,7 +2018,7 @@ const OTHER_CALENDARS = [
     place: 'Moscú / Belgrado (medianoche en UTC+3)', city: 'Moscú', tz: 'Europe/Moscow',
     recurring: { month: 0, day: 14, offset: 3 },
     yearLabel: (gregorianYear) => `${gregorianYear}`,
-    greeting: (year) => `☦️ ¡Feliz Año Nuevo ortodoxo! 🥂\nС Новым годом · Срећна Нова година\n\n${year} según el calendario juliano\n🇷🇸🇷🇺🇲🇰🇲🇪✨\n\n#StaraNovaGodina`,
+    greeting: (year) => `☦️ Happy Orthodox New Year ${year}! 🥂\nС Новым годом! · Срећна Нова година!\n🇪🇸 ¡Feliz Año Nuevo ortodoxo!\n🇮🇹 Felice Anno Nuovo ortodosso!\n\nThe "Old New Year" follows the Julian calendar, 13 days behind ours 🇷🇸🇷🇺🇲🇰🇲🇪✨\n#OrthodoxNewYear #StaraNovaGodina`,
     note: 'Se festeja la noche del 13 al 14 de enero en Serbia, Rusia, Macedonia del Norte, Montenegro y otras comunidades que siguen el calendario juliano.'
   },
   {
@@ -1976,7 +2027,7 @@ const OTHER_CALENDARS = [
     instances: [
       { utcDate: '2027-06-05T00:00:00+03:00', year: '1449 AH' },
     ],
-    greeting: (year) => `🌙 ¡Feliz Año Nuevo islámico! 🕌\nكل عام وأنتم بخير\n\nComienza el año ${year}\n⭐️🤲✨\n\n#HijriNewYear #IslamicNewYear`,
+    greeting: (year) => `🌙 Happy Islamic New Year ${year}! 🕌\nكل عام وأنتم بخير\n🇪🇸 ¡Feliz Año Nuevo islámico!\n🇮🇹 Felice Anno Nuovo islamico!\n\n1 Muharram begins the Hijri year, counted from the Prophet's migration to Medina in 622 ⭐🤲\n#HijriNewYear #IslamicNewYear`,
     note: 'Fecha aproximada: el calendario Hijri se confirma por avistamiento lunar y puede variar ±1 día.'
   },
 ];
@@ -2129,25 +2180,27 @@ function shiftTrasladable(date){
 // Las conmemoraciones de duelo (Memoria, Malvinas), las religiosas
 // solemnes (Viernes Santo) y Güemes/San Martín llevan un texto de homenaje,
 // no un "feliz día": no corresponde armarles un saludo festivo.
+// Cada tuit tiene un renglón explicativo; con la fecha y el hashtag que se
+// agregan después, siempre entra en un solo tuit (≤ 280).
 function getArgHolidays(year){
   const easter = easterSunday(year);
   return [
-    { emoji: '🎊', name: 'Año Nuevo', date: dUTC(year, 0, 1), tweet: '🎊 ¡Feliz Año Nuevo! 🇦🇷\n🥂✨🎉', note: 'Comienzo del año calendario gregoriano.' },
-    { emoji: '🎭', name: 'Carnaval (lunes)', date: addDays(easter, -48), tweet: '🎭 ¡Feliz Carnaval! 🇦🇷\n🎉🥁🎊', note: 'Se celebra el lunes y el martes previos al Miércoles de Ceniza, con desfiles de murgas y comparsas en todo el país.' },
-    { emoji: '🎭', name: 'Carnaval (martes)', date: addDays(easter, -47), tweet: '🎭 ¡Feliz Carnaval! 🇦🇷\n🎉🥁🎊', note: 'Último día de Carnaval antes de la Cuaresma cristiana.' },
-    { emoji: '🕊️', name: 'Día Nacional de la Memoria por la Verdad y la Justicia', date: dUTC(year, 2, 24), tweet: '🕊️ Día Nacional de la Memoria por la Verdad y la Justicia 🇦🇷\n#NuncaMás', note: 'Recuerda a las víctimas del golpe de Estado de 1976 y del terrorismo de Estado ejercido durante la última dictadura militar (1976-1983).' },
-    { emoji: '✝️', name: 'Viernes Santo', date: addDays(easter, -2), tweet: '✝️ Viernes Santo\n🙏🕊️', note: 'Conmemora la crucifixión de Jesucristo, dentro de la Semana Santa cristiana.' },
-    { emoji: '🎖️', name: 'Día del Veterano y de los Caídos en la Guerra de Malvinas', date: dUTC(year, 3, 2), tweet: '🎖️ Hoy honramos a los veteranos y caídos en la Guerra de Malvinas 🇦🇷\n#MalvinasArgentinas', note: 'Homenajea a los caídos y veteranos de la Guerra de Malvinas de 1982, iniciada el 2 de abril de ese año.' },
-    { emoji: '⚒️', name: 'Día del Trabajador', date: dUTC(year, 4, 1), tweet: '⚒️ ¡Feliz Día del Trabajador! 🇦🇷\n✊🎉', note: 'Día Internacional de los Trabajadores, en homenaje a los Mártires de Chicago y la jornada laboral de 8 horas.' },
-    { emoji: '🏛️', name: 'Día de la Revolución de Mayo', date: dUTC(year, 4, 25), tweet: '🏛️ ¡Feliz 25 de Mayo! 🇦🇷\n🎉🏛️', note: 'Recuerda la Revolución de Mayo de 1810, que dio origen al primer gobierno patrio en el Río de la Plata.' },
-    { emoji: '🚩', name: 'Paso a la Inmortalidad del Gral. Güemes', date: shiftTrasladable(dUTC(year, 5, 17)), tweet: '🚩 Hoy conmemoramos el Paso a la Inmortalidad del Gral. Martín Miguel de Güemes 🇦🇷\n🎖️🙏', note: `Recuerda la muerte del Gral. Martín Miguel de Güemes en 1821, defensor del norte argentino durante la guerra de la independencia. ${ARG_TRASLADABLE_NOTE}` },
-    { emoji: '🇦🇷', name: 'Día de la Bandera', date: dUTC(year, 5, 20), tweet: '🇦🇷 ¡Feliz Día de la Bandera! En homenaje al Gral. Manuel Belgrano\n🎉🎗️', note: 'Homenajea a Manuel Belgrano, creador de la bandera argentina en 1812, en el aniversario de su muerte en 1820. Es feriado inamovible desde 2011.' },
-    { emoji: '🎆', name: 'Día de la Independencia', date: dUTC(year, 6, 9), tweet: '🎆 ¡Feliz Día de la Independencia! 🇦🇷\n🎉🎇', note: 'Conmemora la Declaración de la Independencia, firmada en el Congreso de Tucumán el 9 de julio de 1816.' },
-    { emoji: '⚔️', name: 'Paso a la Inmortalidad del Gral. San Martín', date: shiftTrasladable(dUTC(year, 7, 17)), tweet: '⚔️ Hoy conmemoramos el Paso a la Inmortalidad del Gral. José de San Martín 🇦🇷\n🎖️🙏', note: `Recuerda la muerte del Gral. José de San Martín en 1850, libertador de Argentina, Chile y Perú. ${ARG_TRASLADABLE_NOTE}` },
-    { emoji: '🌎', name: 'Día del Respeto a la Diversidad Cultural', date: shiftTrasladable(dUTC(year, 9, 12)), tweet: '🌎 ¡Feliz Día del Respeto a la Diversidad Cultural! 🇦🇷\n🤝✨', note: `Reconoce la diversidad étnica y cultural de los pueblos americanos; reemplazó al antiguo "Día de la Raza". ${ARG_TRASLADABLE_NOTE}` },
-    { emoji: '🇦🇷', name: 'Día de la Soberanía Nacional', date: shiftTrasladable(dUTC(year, 10, 20)), tweet: '🇦🇷 ¡Feliz Día de la Soberanía Nacional!\n🎉🚩', note: `Recuerda la Batalla de la Vuelta de Obligado de 1845, resistencia a una flota anglo-francesa en el río Paraná. ${ARG_TRASLADABLE_NOTE}` },
-    { emoji: '🙏', name: 'Inmaculada Concepción de María', date: dUTC(year, 11, 8), tweet: '🙏 ¡Feliz día de la Inmaculada Concepción!\n✨🕊️', note: 'Fiesta religiosa católica que celebra la concepción sin pecado original de la Virgen María.' },
-    { emoji: '🎄', name: 'Navidad', date: dUTC(year, 11, 25), tweet: '🎄 ¡Feliz Navidad! 🇦🇷\n🎅🎁✨', note: 'Celebra el nacimiento de Jesucristo.' },
+    { emoji: '🎊', name: 'Año Nuevo', date: dUTC(year, 0, 1), tweet: `🎊 ¡Feliz Año Nuevo ${year}! 🇦🇷🥂\nEmpieza un año nuevo: que venga con salud, trabajo y muchos encuentros con los que queremos ✨`, note: 'Comienzo del año calendario gregoriano.' },
+    { emoji: '🎭', name: 'Carnaval (lunes)', date: addDays(easter, -48), tweet: '🎭 ¡Feliz Carnaval! 🇦🇷🥁\nMurgas, comparsas y espuma en todo el país: del Carnaval de Gualeguaychú a los corsos de barrio y la Quebrada de Humahuaca 🎉', note: 'Se celebra el lunes y el martes previos al Miércoles de Ceniza, con desfiles de murgas y comparsas en todo el país.' },
+    { emoji: '🎭', name: 'Carnaval (martes)', date: addDays(easter, -47), tweet: '🎭 ¡Último día de Carnaval! 🇦🇷🎊\nHoy se despide la fiesta antes del Miércoles de Ceniza, que abre la Cuaresma cristiana 🥁✨', note: 'Último día de Carnaval antes de la Cuaresma cristiana.' },
+    { emoji: '🕊️', name: 'Día Nacional de la Memoria por la Verdad y la Justicia', date: dUTC(year, 2, 24), tweet: `🕊️ Día Nacional de la Memoria por la Verdad y la Justicia 🇦🇷\nA ${year - 1976} años del golpe del 24 de marzo de 1976, recordamos a las víctimas del terrorismo de Estado.\n#NuncaMás`, note: 'Recuerda a las víctimas del golpe de Estado de 1976 y del terrorismo de Estado ejercido durante la última dictadura militar (1976-1983).' },
+    { emoji: '✝️', name: 'Viernes Santo', date: addDays(easter, -2), tweet: '✝️ Viernes Santo 🙏\nLos cristianos recordamos la pasión y la muerte de Jesús en la cruz, el gran acto de amor que da sentido a la Pascua 🕊️', note: 'Conmemora la crucifixión de Jesucristo, dentro de la Semana Santa cristiana.' },
+    { emoji: '🎖️', name: 'Día del Veterano y de los Caídos en la Guerra de Malvinas', date: dUTC(year, 3, 2), tweet: `🎖️ Día del Veterano y de los Caídos en la Guerra de Malvinas 🇦🇷\nHonramos a los 649 argentinos que dieron su vida en 1982 y a todos los veteranos.\n#MalvinasArgentinas`, note: 'Homenajea a los caídos y veteranos de la Guerra de Malvinas de 1982, iniciada el 2 de abril de ese año.' },
+    { emoji: '⚒️', name: 'Día del Trabajador', date: dUTC(year, 4, 1), tweet: '⚒️ ¡Feliz Día del Trabajador! 🇦🇷✊\nEn homenaje a los Mártires de Chicago y a la lucha por la jornada de 8 horas. Gracias a todos los que hacen grande al país con su trabajo 🙌', note: 'Día Internacional de los Trabajadores, en homenaje a los Mártires de Chicago y la jornada laboral de 8 horas.' },
+    { emoji: '🏛️', name: 'Día de la Revolución de Mayo', date: dUTC(year, 4, 25), tweet: `🏛️ ¡Feliz 25 de Mayo! 🇦🇷\nEn 1810 el Cabildo Abierto de Buenos Aires destituyó al virrey Cisneros y nació la Primera Junta, el primer gobierno patrio. Hoy se cumplen ${year - 1810} años.\n¡Viva la Patria! 🥘☕`, note: 'El 25 de mayo de 1810, tras la Semana de Mayo, el Cabildo Abierto de Buenos Aires destituyó al virrey Baltasar Hidalgo de Cisneros y formó la Primera Junta, presidida por Cornelio Saavedra: el primer gobierno patrio del Río de la Plata y el inicio del camino a la independencia de 1816. Es feriado inamovible; se celebra con el Tedeum, actos escolares, locro y pastelitos.' },
+    { emoji: '🚩', name: 'Paso a la Inmortalidad del Gral. Güemes', date: shiftTrasladable(dUTC(year, 5, 17)), tweet: '🚩 Paso a la Inmortalidad del Gral. Martín Miguel de Güemes 🇦🇷\nCon sus gauchos defendió el norte del país durante la guerra de la Independencia. Murió el 17 de junio de 1821 🐎🎖️', note: `Recuerda la muerte del Gral. Martín Miguel de Güemes en 1821, defensor del norte argentino durante la guerra de la independencia. ${ARG_TRASLADABLE_NOTE}` },
+    { emoji: '🇦🇷', name: 'Día de la Bandera', date: dUTC(year, 5, 20), tweet: '🇦🇷 ¡Feliz Día de la Bandera!\nHomenajeamos a Manuel Belgrano, que la creó en 1812 a orillas del Paraná, en Rosario, y murió un 20 de junio de 1820 💙🤍💙', note: 'Homenajea a Manuel Belgrano, creador de la bandera argentina en 1812, en el aniversario de su muerte en 1820. Es feriado inamovible desde 2011.' },
+    { emoji: '🎆', name: 'Día de la Independencia', date: dUTC(year, 6, 9), tweet: `🎆 ¡Feliz Día de la Independencia! 🇦🇷\nEl 9 de julio de 1816, en San Miguel de Tucumán, el Congreso declaró la independencia de las Provincias Unidas. ¡${year - 1816} años de Patria libre! 🎉`, note: 'Conmemora la Declaración de la Independencia, firmada en el Congreso de Tucumán el 9 de julio de 1816.' },
+    { emoji: '⚔️', name: 'Paso a la Inmortalidad del Gral. San Martín', date: shiftTrasladable(dUTC(year, 7, 17)), tweet: '⚔️ Paso a la Inmortalidad del Gral. José de San Martín 🇦🇷\nCruzó los Andes y fue el libertador de Argentina, Chile y Perú. Murió el 17 de agosto de 1850 en Francia 🏔️🎖️', note: `Recuerda la muerte del Gral. José de San Martín en 1850, libertador de Argentina, Chile y Perú. ${ARG_TRASLADABLE_NOTE}` },
+    { emoji: '🌎', name: 'Día de la Raza', date: shiftTrasladable(dUTC(year, 9, 12)), tweet: `🌎 12 de Octubre · Día de la Raza 🇦🇷\nSe recuerda la llegada de Cristóbal Colón a América en 1492 y el encuentro entre los pueblos originarios y Europa ⛵🤝`, note: `Recuerda la llegada de Cristóbal Colón a América el 12 de octubre de 1492. Entre 2010 y 2026 se llamó oficialmente "Día del Respeto a la Diversidad Cultural" (Decreto 1584/2010); en agosto de 2026 el Gobierno nacional volvió por decreto al nombre "Día de la Raza", sin cambiar el feriado. ${ARG_TRASLADABLE_NOTE}` },
+    { emoji: '🇦🇷', name: 'Día de la Soberanía Nacional', date: shiftTrasladable(dUTC(year, 10, 20)), tweet: '🇦🇷 Día de la Soberanía Nacional\nEn la Vuelta de Obligado (1845), con cadenas cruzando el río Paraná, se resistió el avance de la flota anglo-francesa ⛓️⚓', note: `Recuerda la Batalla de la Vuelta de Obligado de 1845, resistencia a una flota anglo-francesa en el río Paraná. ${ARG_TRASLADABLE_NOTE}` },
+    { emoji: '🙏', name: 'Inmaculada Concepción de María', date: dUTC(year, 11, 8), tweet: '🙏 Día de la Inmaculada Concepción de María\nFiesta católica de la Virgen concebida sin pecado. Es tradición armar hoy el arbolito de Navidad 🎄✨', note: 'Fiesta religiosa católica que celebra la concepción sin pecado original de la Virgen María.' },
+    { emoji: '🎄', name: 'Navidad', date: dUTC(year, 11, 25), tweet: '🎄 ¡Feliz Navidad! 🇦🇷🎅\nCelebramos el nacimiento de Jesús: que esta Navidad llene cada hogar de paz, amor y esperanza 🎁✨', note: 'Celebra el nacimiento de Jesucristo.' },
   ];
 }
 
@@ -2155,31 +2208,31 @@ function getArgHolidays(year){
 // conmemoran en el calendario escolar y cultural argentino.
 function getArgPatrioticDates(year){
   return [
-    { emoji: '🎼', name: 'Día del Himno Nacional Argentino', date: dUTC(year, 4, 11), tweet: '🎼 ¡Feliz Día del Himno Nacional Argentino!\n🇦🇷🎶', note: 'Recuerda la aprobación en 1813 de la Marcha Patriótica, con letra de Vicente López y Planes y música de Blas Parera, como Himno Nacional.' },
-    { emoji: '🎗️', name: 'Día de la Escarapela Nacional', date: dUTC(year, 4, 18), tweet: '🎗️ ¡Feliz Día de la Escarapela Nacional!\n🇦🇷✨', note: 'Conmemora la adopción de la escarapela celeste y blanca como símbolo patrio en 1812.' },
+    { emoji: '🎼', name: 'Día del Himno Nacional Argentino', date: dUTC(year, 4, 11), tweet: '🎼 ¡Feliz Día del Himno Nacional Argentino! 🇦🇷\nEl 11 de mayo de 1813 la Asamblea aprobó la Marcha Patriótica de Vicente López y Planes, con música de Blas Parera 🎶', note: 'Recuerda la aprobación en 1813 de la Marcha Patriótica, con letra de Vicente López y Planes y música de Blas Parera, como Himno Nacional.' },
+    { emoji: '🎗️', name: 'Día de la Escarapela Nacional', date: dUTC(year, 4, 18), tweet: '🎗️ ¡Feliz Día de la Escarapela! 🇦🇷\nEn 1812 se adoptó la escarapela celeste y blanca como símbolo patrio. ¡Llevala con orgullo en el pecho! 💙🤍', note: 'Conmemora la adopción de la escarapela celeste y blanca como símbolo patrio en 1812.' },
   ];
 }
 
 function getItalyHolidays(year){
   const easter = easterSunday(year);
   const list = [
-    { emoji: '🎊', name: 'Capodanno (Año Nuevo)', date: dUTC(year, 0, 1), tweet: '🎊 Buon Anno! 🇮🇹\n🥂✨🎉', note: 'Comienzo del año calendario gregoriano.' },
-    { emoji: '⭐', name: 'Epifanía', date: dUTC(year, 0, 6), tweet: '⭐ Buona Epifania! 🇮🇹\n🧙‍♀️✨', note: 'Fiesta cristiana de la Epifanía; en la tradición italiana, la Befana trae regalos y dulces a los niños.' },
-    { emoji: '✝️', name: 'Pasqua (Domingo de Pascua)', date: easter, tweet: '✝️ Buona Pasqua! 🇮🇹\n🐣🌷', note: 'Domingo de Resurrección, la fiesta más importante del calendario litúrgico cristiano.' },
-    { emoji: '🐣', name: 'Pasquetta (Lunedì dell\'Angelo)', date: addDays(easter, 1), tweet: '🐣 Buona Pasquetta! 🇮🇹\n🧺🌷', note: 'Lunes de Pascua; en Italia se celebra tradicionalmente con picnics y salidas al aire libre.' },
-    { emoji: '🕊️', name: 'Festa della Liberazione', date: dUTC(year, 3, 25), tweet: '🕊️ Buona Festa della Liberazione! 🇮🇹\n🎉🕊️', note: 'Conmemora la liberación de Italia del nazifascismo en 1945, al final de la Segunda Guerra Mundial.' },
-    { emoji: '⚒️', name: 'Festa dei Lavoratori', date: dUTC(year, 4, 1), tweet: '⚒️ Buona Festa dei Lavoratori! 🇮🇹\n✊🎉', note: 'Día Internacional de los Trabajadores, en homenaje a los Mártires de Chicago.' },
-    { emoji: '🇮🇹', name: 'Festa della Repubblica', date: dUTC(year, 5, 2), tweet: '🇮🇹 Buona Festa della Repubblica!\n🎉🇮🇹', note: 'Conmemora el referéndum de 1946 que estableció la República Italiana, tras la abolición de la monarquía.' },
-    { emoji: '☀️', name: 'Ferragosto', date: dUTC(year, 7, 15), tweet: '☀️ Buon Ferragosto! 🇮🇹\n🏖️🎉', note: 'Fiesta de la Asunción de María; en Italia es tradicionalmente el punto más alto de las vacaciones de verano.' },
+    { emoji: '🎊', name: 'Capodanno (Año Nuevo)', date: dUTC(year, 0, 1), tweet: `🎊 Buon Anno ${year}! 🇮🇹🥂\nChe il nuovo anno porti salute, serenità e tanti momenti da condividere con chi amiamo ✨`, note: 'Comienzo del año calendario gregoriano.' },
+    { emoji: '⭐', name: 'Epifanía', date: dUTC(year, 0, 6), tweet: '⭐ Buona Epifania! 🇮🇹\nI Re Magi arrivano alla grotta e la Befana porta dolci ai bimbi buoni… e carbone agli altri! L\'Epifania tutte le feste porta via 🧹🧦', note: 'Fiesta cristiana de la Epifanía; en la tradición italiana, la Befana trae regalos y dulces a los niños.' },
+    { emoji: '✝️', name: 'Pasqua (Domingo de Pascua)', date: easter, tweet: '✝️ Buona Pasqua! 🇮🇹\nCristo è risorto: la festa più importante dei cristiani. Tra colomba e uova di cioccolato, auguri di pace a tutti 🐣🌷', note: 'Domingo de Resurrección, la fiesta más importante del calendario litúrgico cristiano.' },
+    { emoji: '🐣', name: 'Pasquetta (Lunedì dell\'Angelo)', date: addDays(easter, 1), tweet: '🐣 Buona Pasquetta! 🇮🇹\nIl Lunedì dell\'Angelo si festeggia all\'aria aperta: gite fuori porta, picnic e grigliate con gli amici 🧺🌷', note: 'Lunes de Pascua; en Italia se celebra tradicionalmente con picnics y salidas al aire libre.' },
+    { emoji: '🕊️', name: 'Festa della Liberazione', date: dUTC(year, 3, 25), tweet: `🕊️ Buona Festa della Liberazione! 🇮🇹\nIl 25 aprile 1945 l'Italia si liberava dal nazifascismo. ${year - 1945} anni di libertà e democrazia 🌹`, note: 'Conmemora la liberación de Italia del nazifascismo en 1945, al final de la Segunda Guerra Mundial.' },
+    { emoji: '⚒️', name: 'Festa dei Lavoratori', date: dUTC(year, 4, 1), tweet: '⚒️ Buona Festa dei Lavoratori! 🇮🇹✊\n"L\'Italia è una Repubblica democratica, fondata sul lavoro" (Costituzione, art. 1). Grazie a chi ogni giorno manda avanti il Paese 🙌', note: 'Día Internacional de los Trabajadores, en homenaje a los Mártires de Chicago.' },
+    { emoji: '🇮🇹', name: 'Festa della Repubblica', date: dUTC(year, 5, 2), tweet: `🇮🇹 Buona Festa della Repubblica!\nIl 2 giugno 1946 gli italiani scelsero la Repubblica con un referendum, e votarono per la prima volta anche le donne. Auguri Italia, ${year - 1946} anni! 🎉`, note: 'Conmemora el referéndum de 1946 que estableció la República Italiana, tras la abolición de la monarquía.' },
+    { emoji: '☀️', name: 'Ferragosto', date: dUTC(year, 7, 15), tweet: '☀️ Buon Ferragosto! 🇮🇹\nFesta dell\'Assunta e cuore dell\'estate italiana, dalle Feriae Augusti dell\'antica Roma: mare, montagna e pranzi in compagnia 🏖️🍉', note: 'Fiesta de la Asunción de María; en Italia es tradicionalmente el punto más alto de las vacaciones de verano.' },
   ];
   if (year >= 2026){
-    list.push({ emoji: '🕊️', name: 'San Francesco d\'Assisi (patrono de Italia)', date: dUTC(year, 9, 4), note: 'Patrono de Italia desde 1939; el feriado, quitado en 1977, se restableció desde 2026 para el octavo centenario de su muerte (1226-2026).', tweet: '🕊️ Buona Festa di San Francesco d\'Assisi! 🇮🇹\n🙏✨' });
+    list.push({ emoji: '🕊️', name: 'San Francesco d\'Assisi (patrono de Italia)', date: dUTC(year, 9, 4), note: 'Patrono de Italia desde 1939; el feriado, quitado en 1977, se restableció desde 2026 para el octavo centenario de su muerte (1226-2026).', tweet: '🕊️ Buona Festa di San Francesco d\'Assisi! 🇮🇹\nIl patrono d\'Italia, il santo della pace, dei poveri e del creato. "Laudato si\', mi Signore" 🙏🌿' });
   }
   list.push(
-    { emoji: '🙏', name: 'Ognissanti (Todos los Santos)', date: dUTC(year, 10, 1), tweet: '🙏 Buona Festa di Ognissanti! 🇮🇹\n🕯️✨', note: 'Fiesta cristiana de Todos los Santos, honra a la totalidad de los santos conocidos y desconocidos.' },
-    { emoji: '✨', name: 'Immacolata Concezione', date: dUTC(year, 11, 8), tweet: '✨ Buona Festa dell\'Immacolata! 🇮🇹\n🙏🕊️', note: 'Fiesta religiosa católica que celebra la concepción sin pecado original de la Virgen María.' },
-    { emoji: '🎄', name: 'Natale', date: dUTC(year, 11, 25), tweet: '🎄 Buon Natale! 🇮🇹\n🎅🎁✨', note: 'Celebra el nacimiento de Jesucristo.' },
-    { emoji: '🎅', name: 'Santo Stefano', date: dUTC(year, 11, 26), tweet: '🎅 Buona Festa di Santo Stefano! 🇮🇹\n🎄✨', note: 'Honra a San Esteban, venerado como el primer mártir cristiano.' },
+    { emoji: '🙏', name: 'Ognissanti (Todos los Santos)', date: dUTC(year, 10, 1), tweet: '🙏 Buona Festa di Ognissanti! 🇮🇹\nOggi si ricordano tutti i santi, conosciuti e sconosciuti; domani la commemorazione dei defunti 🕯️✨', note: 'Fiesta cristiana de Todos los Santos, honra a la totalidad de los santos conocidos y desconocidos.' },
+    { emoji: '✨', name: 'Immacolata Concezione', date: dUTC(year, 11, 8), tweet: '✨ Buona Festa dell\'Immacolata! 🇮🇹\nFesta della Madonna concepita senza peccato. Per tradizione oggi si fanno l\'albero e il presepe 🎄🙏', note: 'Fiesta religiosa católica que celebra la concepción sin pecado original de la Virgen María.' },
+    { emoji: '🎄', name: 'Natale', date: dUTC(year, 11, 25), tweet: '🎄 Buon Natale! 🇮🇹🎅\nFesteggiamo la nascita di Gesù: che questo Natale porti pace, amore e speranza in ogni casa 🎁✨', note: 'Celebra el nacimiento de Jesucristo.' },
+    { emoji: '🎅', name: 'Santo Stefano', date: dUTC(year, 11, 26), tweet: '🎅 Buona Festa di Santo Stefano! 🇮🇹\nSi ricorda il primo martire cristiano; e si continua a festeggiare, tra panettone e avanzi del pranzo di Natale 🎄✨', note: 'Honra a San Esteban, venerado como el primer mártir cristiano.' },
   );
   return list;
 }

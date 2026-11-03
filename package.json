@@ -1,0 +1,13 @@
+{
+  "name": "new_year",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/data.test.mjs && node tests/browser.test.mjs",
+    "test:data": "node tests/data.test.mjs",
+    "test:browser": "node tests/browser.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.50.0"
+  }
+}

@@ -37,3 +37,20 @@ Cada zona (Navidad / Año Nuevo), cada tarjeta de Otros calendarios y cada feria
 ## Otros calendarios
 
 La tercera pestaña (`OTHER_CALENDARS` en `index.html`) es una lista fija con las próximas fechas de Rosh Hashaná, Año Nuevo chino, Losar (tibetano), Nyepi (balinés), Nowruz, Ugadi / Gudi Padwa (hindú), Enkutatash (etíope), Songkran (tailandés), Año Nuevo nepalí, Matariki (maorí), Año Nuevo ortodoxo (juliano) y el Año Nuevo islámico, cada una con su conversión a hora de Italia y Argentina. Como no son eventos que crucen las 37 zonas horarias (son un momento puntual en su propio calendario), no generan un tuit por zona sino uno solo por celebración. Las que se celebraron en los últimos 30 días aparecen primero como "recién celebradas". Hay que actualizar esas fechas a mano una vez que pasan (el Hijri islámico en particular se confirma por avistamiento lunar, así que su fecha es aproximada).
+
+## Privacidad
+
+- `privacidad.html` explica qué datos se recogen, a quién se envían, el uso de IA y cómo borrar los datos.
+- Google Analytics (`G-P9SC8CDHN4`) se carga **solo si la persona acepta** el aviso de cookies. La elección queda en `localStorage` (`ny_cookie_consent`) y se puede cambiar desde «Preferencias de cookies» en el pie.
+- Las fuentes están en `fonts/` (antes venían de Google Fonts), así el navegador no le pasa la IP de cada visitante a Google.
+
+## Pruebas
+
+```bash
+npm install
+npx playwright install chromium
+npm test
+```
+
+`tests/data.test.mjs` revisa `data.json` (orden, rangos, duplicados, formato) y `tests/browser.test.mjs` abre la página en Chromium: carga, aviso de cookies, inyección de HTML, ajustes inválidos, almacenamiento bloqueado, falla de `data.json`, vista `?vitrina=1`, celular y política de privacidad. GitHub Actions las corre en cada push (`.github/workflows/tests.yml`).
+

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1026">
+<title>Política de privacidad — Feliz Año Nuevo</title>
+<meta name="description" content="Qué datos recoge la página de Año Nuevo y husos horarios, a quién se envían y cómo borrarlos.">
+<link rel="stylesheet" href="fonts/fonts.css">
+<script>
+  try { if (localStorage.getItem('cfg_theme') === 'light') document.documentElement.dataset.theme = 'light'; } catch (e) {}
+</script>
+<style>
+  :root{
+    --ink:#0b1026; --ink-2:#141b3d; --line:rgba(255,255,255,.10);
+    --accent:#2dd4bf; --ember:#ff6b57; --text:#f3f1e9; --text-dim:#a9adc9; --radius:14px;
+  }
+  :root[data-theme="light"]{
+    --ink:#f3f1e9; --ink-2:#ffffff; --line:rgba(11,16,38,.12);
+    --accent:#0d9488; --ember:#d84a37; --text:#141a33; --text-dim:#565c78;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--ink);color:var(--text);font-family:'Inter', system-ui, sans-serif;line-height:1.65;font-size:16px;}
+  main{max-width:720px;margin:0 auto;padding:40px 16px 64px;}
+  a{color:var(--accent);}
+  .back{font-size:14px;text-decoration:none;}
+  h1{font-family:'Fraunces', Georgia, serif;font-weight:600;font-size:clamp(30px,7vw,44px);line-height:1.1;margin:18px 0 6px;}
+  .updated{color:var(--text-dim);font-size:14px;margin:0 0 28px;}
+  h2{font-family:'Fraunces', Georgia, serif;font-weight:600;font-size:22px;margin:36px 0 8px;}
+  p,li{color:var(--text);}
+  .dim{color:var(--text-dim);}
+  ul{padding-left:20px;}
+  li{margin:6px 0;}
+  .summary{background:var(--ink-2);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;}
+  .summary ul{margin:0;}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0;}
+  th,td{text-align:left;vertical-align:top;padding:10px 8px;border-bottom:1px solid var(--line);}
+  th{color:var(--text-dim);font-weight:600;}
+  .table-wrap{overflow-x:auto;}
+  code{font-family:'JetBrains Mono', monospace;font-size:13px;}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+  button{font:inherit;font-weight:600;cursor:pointer;padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--text);}
+  button.danger{background:var(--ember);border-color:var(--ember);color:#fff;}
+  #status{min-height:1.6em;color:var(--accent);font-weight:600;}
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="./">← Volver a la página</a>
+  <h1>Política de privacidad</h1>
+  <p class="updated">Última actualización: 3 de noviembre de 2026</p>
+
+  <div class="summary">
+    <ul>
+      <li>Sin tu permiso <b>no se envía ningún dato tuyo</b> a terceros.</li>
+      <li>Si aceptás las cookies, Google Analytics cuenta las visitas de forma estadística.</li>
+      <li>Tus saludos y ajustes se guardan <b>solo en tu navegador</b>; podés borrarlos con un botón (abajo).</li>
+      <li>No hay cuentas, formularios ni contraseñas, y no se venden datos.</li>
+    </ul>
+  </div>
+
+  <h2>Quién es responsable</h2>
+  <p>Esta página la hace y mantiene Hernando Gigliotti (<a href="https://github.com/hagigliotti" rel="noopener">@hagigliotti</a>). Para cualquier consulta sobre tus datos, abrí un aviso en <a href="https://github.com/hagigliotti/new_year/issues" rel="noopener">github.com/hagigliotti/new_year/issues</a>.</p>
+
+  <h2>Qué datos se recogen</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Dato</th><th>Para qué</th><th>Dónde queda</th><th>¿Necesita tu permiso?</th></tr></thead>
+    <tbody>
+      <tr><td>Estadísticas de visita (páginas vistas, tipo de dispositivo y navegador, país o ciudad aproximados, de dónde llegaste) y las cookies <code>_ga</code> / <code>_ga_*</code></td><td>Saber cuánta gente usa la página y mejorarla</td><td>Google Analytics</td><td><b>Sí</b>, solo si tocás «Aceptar»</td></tr>
+      <tr><td>Tu saludo editado, huso horario, país de feriados, tema claro/oscuro, última pestaña y tu respuesta al aviso de cookies</td><td>Que la página recuerde tus ajustes</td><td>Solo en tu navegador (<code>localStorage</code>); nunca se envía</td><td>No: es necesario para que la página funcione como elegiste</td></tr>
+      <tr><td>Dirección IP y datos técnicos de la conexión</td><td>Entregarte la página y protegerla de abusos</td><td>GitHub (el servicio que aloja la página)</td><td>No: es necesario para que la página cargue</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="dim">No se recogen nombres, correos, contraseñas ni datos de pago. Las fuentes tipográficas se sirven desde este mismo sitio, así que tu navegador no se conecta a Google Fonts.</p>
+
+  <h2>A quién se envían los datos</h2>
+  <ul>
+    <li><b>Google (Google Analytics)</b> — solo si aceptás. Google puede procesar los datos en Estados Unidos bajo el marco de privacidad UE–EE.UU. (Data Privacy Framework). Ver la <a href="https://policies.google.com/privacy" rel="noopener">política de Google</a>.</li>
+    <li><b>GitHub</b> — aloja la página y registra datos técnicos de acceso. Ver la <a href="https://docs.github.com/es/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">declaración de privacidad de GitHub</a>.</li>
+    <li><b>X (Twitter) y WhatsApp</b> — solo si tocás «Programar en X», «Tuitear» o «WhatsApp»: se abre ese servicio con el texto del saludo, y a partir de ahí se aplica su propia política.</li>
+  </ul>
+  <p>No se venden, alquilan ni comparten datos con nadie más.</p>
+
+  <h2>Uso de inteligencia artificial</h2>
+  <p>La página <b>no usa inteligencia artificial para procesar tus datos</b>: no hay chat, ni análisis automático de lo que escribís. Lo que sí avisamos: parte del código y de los textos de la página se escribieron con ayuda de una IA (Claude, de Anthropic) y fueron revisados por el autor antes de publicarse.</p>
+
+  <h2>Cuánto tiempo se guardan</h2>
+  <ul>
+    <li>Google Analytics: hasta 2 meses los datos a nivel de usuario; después quedan solo totales anónimos. Las cookies <code>_ga</code> duran hasta 2 años si no las borrás.</li>
+    <li>Tus ajustes en el navegador: hasta que los borres (con el botón de abajo o limpiando los datos del sitio).</li>
+  </ul>
+
+  <h2>Tus derechos y cómo borrar tus datos</h2>
+  <p>Podés pedir ver, corregir o borrar tus datos, y oponerte a su uso. <b>Si pedís que se borre algo, se borra de verdad</b>: la solicitud se atiende en un máximo de 30 días, se borra también en Google Analytics (con su herramienta de eliminación de datos) y se te confirma cuando está hecho. Si no quedás conforme, podés reclamar ante tu autoridad de protección de datos (en Italia, el <a href="https://www.garanteprivacy.it" rel="noopener">Garante per la protezione dei dati personali</a>).</p>
+  <p>Lo que está en tu navegador lo podés borrar vos mismo ahora:</p>
+  <div class="actions">
+    <button type="button" class="danger" id="wipe">Borrar mis datos de este navegador</button>
+    <button type="button" id="revoke">Retirar el permiso de cookies</button>
+  </div>
+  <p id="status" role="status" aria-live="polite"></p>
+
+  <h2>Testimonios y reseñas</h2>
+  <p>Esta página no publica testimonios, reseñas ni opiniones de usuarios. Las vistas previas de tuits con el nombre «Hernando Gigliotti» son ejemplos del propio autor, no opiniones de otras personas. Nunca se publicarán testimonios inventados: si algún día se muestran opiniones, serán reales y con permiso de quien las escribió.</p>
+
+  <h2>Menores</h2>
+  <p>La página no está pensada para recoger datos de menores de 14 años y no pide datos personales a nadie.</p>
+
+  <h2>Cambios</h2>
+  <p>Si esta política cambia, se actualiza la fecha de arriba. Si el cambio implica recoger datos nuevos, se te volverá a pedir permiso.</p>
+</main>
+
+<script>
+  // Solo las claves que usa esta página (el dominio es compartido con otros
+  // proyectos de @hagigliotti, así que no se borra nada ajeno).
+  const KEYS = ['cfg_citySeconds','cfg_holidayCountry','cfg_showTweets','cfg_baseSelect','cfg_baseCustom',
+                'cfg_theme','cfg_lastTab','cfg_lastTab_vitrina','greeting_newyear','greeting_christmas','ny_cookie_consent'];
+  const status = document.getElementById('status');
+
+  function clearAnalyticsCookies(){
+    document.cookie.split(';').map(c => c.trim().split('=')[0])
+      .filter(n => n === '_ga' || n.startsWith('_ga_') || n === '_gid')
+      .forEach(n => {
+        document.cookie = n + '=; Max-Age=0; path=/';
+        document.cookie = n + '=; Max-Age=0; path=/; domain=.' + location.hostname;
+      });
+  }
+
+  document.getElementById('wipe').addEventListener('click', () => {
+    if (!confirm('¿Borrar tu saludo, tus ajustes y las cookies de estadística de este navegador?')) return;
+    try { KEYS.forEach(k => localStorage.removeItem(k)); } catch (e) {}
+    clearAnalyticsCookies();
+    status.textContent = 'Listo: se borraron tus datos de este navegador.';
+  });
+
+  document.getElementById('revoke').addEventListener('click', () => {
+    try { localStorage.setItem('ny_cookie_consent', 'denied'); } catch (e) {}
+    clearAnalyticsCookies();
+    status.textContent = 'Listo: Google Analytics queda desactivado en este navegador.';
+  });
+</script>
+</body>
+</html>

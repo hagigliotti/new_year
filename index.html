@@ -684,6 +684,30 @@
   .locked-box p{color:var(--text-dim); font-size:.92rem; margin:0 0 18px;}
   .locked-box .locked-ico{font-size:2rem; margin:0 0 6px;}
   .locked-box .copy-btn{display:inline-block; text-decoration:none; padding:10px 16px;}
+  .schedule{
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    padding:12px 14px 10px;
+    background:linear-gradient(135deg, var(--accent-soft), transparent);
+    border-bottom:1px solid var(--line);
+    text-align:center;
+  }
+  .schedule-label{font-size:.78rem; color:var(--text-dim); font-weight:600;}
+  .schedule-date{font-size:.95rem; color:var(--text); font-weight:600;}
+  .schedule-time{font-family:'JetBrains Mono', monospace; font-size:2rem; line-height:1.1; color:var(--accent); font-weight:500;}
+  .schedule-tz{font-size:.74rem; color:var(--text-dim);}
+  .schedule.past .schedule-time{color:var(--ember); text-decoration:line-through;}
+  #schedule-toast{
+    position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translateX(-50%);
+    width:min(420px, calc(100% - 24px)); z-index:200;
+    background:var(--ink-2); border:1px solid var(--accent); border-radius:16px;
+    padding:16px 18px; text-align:center; box-shadow:0 16px 40px rgba(0,0,0,.45);
+  }
+  #schedule-toast p{margin:0;}
+  .toast-title{font-size:.85rem; color:var(--text-dim); font-weight:600;}
+  .toast-date{font-size:1rem; font-weight:600; margin-top:6px !important;}
+  .toast-time{font-family:'JetBrains Mono', monospace; font-size:2.4rem; color:var(--accent); line-height:1.1;}
+  .toast-note{font-size:.76rem; color:var(--text-dim); margin-top:6px !important;}
+  .toast-close{position:absolute; top:8px; right:10px; background:transparent; border:none; color:var(--text-dim); font-size:1rem; cursor:pointer;}
   .vitrina-note{
     margin:18px 0 0;
     font-size:.82rem;
@@ -1127,11 +1151,41 @@ function updateLiveTimes(){
 }
 
 // Tarjeta de vista previa de un tuit (texto centrado, como se verá en X).
+// ---------------------------------------------------------------------------
+// Programación en X: X programa con la hora del dispositivo, así que se
+// muestra la fecha y hora LOCAL de este celular/computadora en la que hay que
+// programar cada tuit para que salga justo a la medianoche de ese lugar.
+// ---------------------------------------------------------------------------
+const DEVICE_TZ = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (_){ return ''; } })();
+function scheduleParts(atMs){
+  const d = new Date(atMs);
+  const time = new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(d);
+  const date = new Intl.DateTimeFormat('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+  return { time, date: date.charAt(0).toUpperCase() + date.slice(1), past: atMs < Date.now() };
+}
+function scheduleHtml(atMs, place, placeTime = '00:00'){
+  const { time, date, past } = scheduleParts(atMs);
+  return `
+      <div class="schedule${past ? ' past' : ''}">
+        <span class="schedule-label">${past ? '⚠️ Esta hora ya pasó' : '⏰ Programalo en X para el'}</span>
+        <span class="schedule-date">${date}</span>
+        <span class="schedule-time">${time}</span>
+        <span class="schedule-tz">hora de este dispositivo${DEVICE_TZ ? ` (${escapeHtml(DEVICE_TZ)})` : ''} → sale a las ${placeTime} en ${escapeHtml(place)}</span>
+      </div>`;
+}
+// Hora local del epicentro de una celebración (por ej. 18:00 en Jerusalén).
+function epicenterTime(cal, inst){
+  return new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: cal.tz }).format(new Date(inst.utcDate));
+}
+
+// Tarjeta de vista previa de un tuit (texto centrado, como se verá en X).
 function tweetCardHtml(text, opts = {}){
   const len = twLen(text);
-  const { part = 1, total = 1, when = '', copyLabel = 'Copiar tuit' } = opts;
+  const { part = 1, total = 1, copyLabel = 'Copiar tuit', at = 0, place = '', placeTime = '00:00' } = opts;
+  const ptime = at && part > 1 ? new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'UTC' }).format(new Date(Date.UTC(2000, 0, 1, 0, part - 1))) : placeTime;
   return `
     <div class="tweet-card">
+      ${at ? scheduleHtml(at, place, ptime) : ''}
       <div class="tweet-top">
         <span class="tweet-avatar">HAG</span>
         <span class="tweet-who"><b>Hernando Gigliotti</b><span>@hagigliotti</span></span>
@@ -1141,13 +1195,33 @@ function tweetCardHtml(text, opts = {}){
       <div class="tweet-foot">
         <div class="tweet-meta">
           <span class="char-count ${len > 280 ? 'warn' : ''}">${len}/280 caracteres</span>
-          ${when ? `<span class="char-count">📅 ${when}</span>` : ''}
         </div>
-        <a class="tweet-btn" href="${twitterIntentUrl(text)}" target="_blank" rel="noopener noreferrer">🐦 Tuitear</a>
+        <a class="tweet-btn" href="${twitterIntentUrl(text)}" target="_blank" rel="noopener noreferrer" ${at ? `data-at="${at}" data-place="${escapeHtml(place)}" data-ptime="${ptime}" data-text="${encodeURIComponent(text)}"` : ''}>🐦 ${at ? 'Programar en X' : 'Tuitear'}</a>
         <a class="tweet-btn" href="${whatsappUrl(text)}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
         <button class="copy-btn" data-text="${encodeURIComponent(text)}">${copyLabel}${total > 1 ? ` ${part}/${total}` : ''}</button>
       </div>
     </div>`;
+}
+
+// Aviso que queda en pantalla al tocar "Programar en X": copia el texto y
+// recuerda la fecha y hora exactas para ponerlas en el calendario de X.
+function showScheduleToast(at, place, ptime){
+  const { time, date, past } = scheduleParts(at);
+  let el = document.getElementById('schedule-toast');
+  if (!el){
+    el = document.createElement('div');
+    el.id = 'schedule-toast';
+    el.setAttribute('role', 'status');
+    document.body.appendChild(el);
+  }
+  el.innerHTML = `
+    <button class="toast-close" aria-label="Cerrar">✕</button>
+    <p class="toast-title">${past ? '⚠️ Esa hora ya pasó' : '⏰ En X, tocá el ícono 📅 y elegí:'}</p>
+    <p class="toast-date">${date}</p>
+    <p class="toast-time">${time}</p>
+    <p class="toast-note">Hora de este dispositivo${DEVICE_TZ ? ` (${escapeHtml(DEVICE_TZ)})` : ''}. Así sale a las ${ptime} en ${escapeHtml(place)}. El texto ya quedó copiado por si X no lo carga.</p>`;
+  el.hidden = false;
+  el.querySelector('.toast-close').onclick = () => { el.hidden = true; };
 }
 
 const CHEV_SVG = '<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -1634,10 +1708,8 @@ function renderZones(){
         ${showTweets ? `
         <p class="tweets-title">TUITS PARA PROGRAMAR (${z.tweets.length})</p>
         ${z.tweets.map((t,i) => {
-          const tweetMs = z._target.getTime() + baseOffset*3600000 + i*60000;
-          const w = wallClockInZone(tweetMs, 0);
-          const when = `${fmtHM(w.h, w.m)} · ${fmtDM(w.day, w.month)} (${baseLabel})`;
-          return tweetCardHtml(t, { part: i + 1, total: z.tweets.length, when });
+          // Cada tuit del hilo sale 1 minuto después del anterior.
+          return tweetCardHtml(t, { part: i + 1, total: z.tweets.length, at: z._target.getTime() + i * 60000, place: z.utc });
         }).join('')}
         ` : `<p class="tweets-title">Tuits ocultos — activalos en el menú ⚙️ Configuración</p>`}
         <button class="close-zone-btn" data-toggle>▲ Cerrar zona</button>
@@ -1690,6 +1762,12 @@ document.addEventListener('click', (e) => {
     }
     return;
   }
+  const sched = e.target.closest('.tweet-btn[data-at]');
+  if (sched){
+    try { navigator.clipboard.writeText(decodeURIComponent(sched.dataset.text)); } catch (_){ /* sin portapapeles */ }
+    showScheduleToast(+sched.dataset.at, sched.dataset.place, sched.dataset.ptime || '00:00');
+    return; // el enlace se abre igual (target=_blank)
+  }
   const btn = e.target.closest('.copy-btn');
   if(btn){
     const text = decodeURIComponent(btn.dataset.text);
@@ -1733,10 +1811,10 @@ function whatsappUrl(text){
 // Botones compactos para compartir, que van al lado de "📅 Agendar" en
 // Otros calendarios y Feriados cuando la tarjeta de tuit completa está
 // oculta (así siempre se puede tuitear, aunque los tuits estén desactivados).
-function shareButtons(text, copyLabel){
+function shareButtons(text, copyLabel, at, place){
   if (!text) return '';
   return `
-          <a class="tweet-btn" href="${twitterIntentUrl(text)}" target="_blank" rel="noopener noreferrer">🐦 Tuitear</a>
+          <a class="tweet-btn" href="${twitterIntentUrl(text)}" target="_blank" rel="noopener noreferrer" ${at ? `data-at="${at}" data-place="${escapeHtml(place || '')}" data-text="${encodeURIComponent(text)}"` : ''}>🐦 Programar en X</a>
           <a class="tweet-btn" href="${whatsappUrl(text)}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
           <button class="copy-btn" data-text="${encodeURIComponent(text)}">${copyLabel}</button>`;
 }
@@ -2128,10 +2206,10 @@ function renderCalendars(){
             ${remainRowHtml(nextTarget, '¡Se está celebrando! 🎉')}
           </div>
           ${c.note ? `<p class="cal-note">${c.note}</p>` : ''}
-          ${showTweets ? tweetCardHtml(greeting, { copyLabel: 'Copiar saludo' }) : ''}
+          ${showTweets ? tweetCardHtml(greeting, { copyLabel: 'Copiar saludo', at: d.getTime(), place: c.city, placeTime: epicenterTime(c, inst) }) : ''}
           <div class="card-actions">
             <button class="ics-btn" data-ics-title="${encodeURIComponent(c.name)}" data-ics-desc="${encodeURIComponent(c.sub + ' · ' + c.place)}" data-ics-start="${d.toISOString()}" data-ics-allday="0">📅 Agendar</button>
-            ${showTweets ? '' : shareButtons(greeting, 'Copiar saludo')}
+            ${showTweets ? '' : shareButtons(greeting, 'Copiar saludo', d.getTime(), c.city)}
           </div>
           <button class="close-zone-btn" data-toggle style="margin-top:14px;">▲ Cerrar</button>
         </div>
@@ -2336,8 +2414,8 @@ function renderHolidayGrid(gridId, getListFn){
             ${remainRowHtml(start, '¡Hoy es feriado! 🎉')}
           </div>
           ${h.note ? `<p class="cal-note">${h.note}</p>` : ''}
-          ${showTweets && tweet ? tweetCardHtml(tweet) : ''}
-          <div class="card-actions">${icsBtn}${showTweets ? '' : shareButtons(tweet, 'Copiar tuit')}</div>
+          ${showTweets && tweet ? tweetCardHtml(tweet, { at: start, place: country }) : ''}
+          <div class="card-actions">${icsBtn}${showTweets ? '' : shareButtons(tweet, 'Copiar tuit', start, country)}</div>
           <button class="close-zone-btn" data-toggle style="margin-top:14px;">▲ Cerrar</button>
         </div>
       </div>`;
